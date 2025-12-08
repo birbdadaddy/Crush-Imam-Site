@@ -1,0 +1,39 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="confessions-wrapper">
+        <h1>{% if category == 'fame' %}Hall of Fame (9a3a d machahir){% else %}Hall of Shame (9a3a d lmasayib){% endif %}</h1>
+        {% if posts %}
+            <div class="confessions-list">
+                {% for p in posts %}
+                    <div class="confession-item">
+                        <h3>{{ p.title }}</h3>
+                        {% if p.image %}
+                            <img src="{{ p.image.url }}" alt="{{ p.title }}" style="max-width:100%; height:auto; margin:10px 0; border-radius:6px;">
+                        {% endif %}
+                        <p class="confession-text">{{ p.body|truncatewords:40 }}</p>
+                        <div class="confession-footer">
+                            <a href="{% url 'hall_detail' p.pk %}" class="confession-link">9ra ktar</a>
+                            {% if user.is_staff %}
+                            <form method="post" action="{% url 'hall_delete' pk=p.pk %}" style="display:inline; margin-left:10px;" onsubmit="return confirm('Delete this hall post?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-small">Mas7</button>
+                            </form>
+                            {% endif %}
+                            <span class="confession-date">{{ p.created_at|date:"F d, Y" }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Ba9i ma kaynch chi post.</p>
+            </div>
+        {% endif %}
+        {% if user.is_staff %}
+            <a href="{% url 'hall_create' category=category %}" class="btn btn-admin" style="margin-top:20px;">Create Post</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

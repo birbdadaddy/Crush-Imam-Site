@@ -1,0 +1,40 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Submit Your Confession</h1>
+        <p style="color: #666; margin-bottom: 30px;">Nchar l2afkar dyalk m3ana. Ladmins dyalna 3aychofoha o mnb3d ypostiwha n community.</p>
+        
+        <form method="post" class="confession-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="id_text">{{ form.text.label }}</label>
+                {{ form.text }}
+                {% if form.text.errors %}
+                    <div class="form-errors">
+                        {% for error in form.text.errors %}
+                            <p class="error-message">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-help">Nchar l3tiraf dyalk (required)</small>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <label>
+                    {{ form.anonymous }}
+                    {{ form.anonymous.label }}
+                </label>
+                <small class="form-help">Ila chkitiha, ghadi ykon l3tiraf dyalk majhol</small>
+            </div>
+            
+            <div class="account-actions">
+                <button type="submit" class="btn btn-primary btn-large">Sift l3tiraf</button>
+                <a href="{% url 'confessions_list' %}" class="btn btn-secondary">Rojo3</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

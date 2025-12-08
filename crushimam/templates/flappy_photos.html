@@ -1,0 +1,49 @@
+{% extends 'crushimam/base.html' %}
+
+{% block title %}Captured Flappy Photos{% endblock %}
+
+{% block content %}
+<div class="container">
+<div class="confessions-wrapper">
+    <h2 class="mb-4">Captured Flappy Photos (Admin)</h2>
+    
+    {% if photos %}
+        <div class="photos-wrapper">
+            <div class="photos-list">
+                {% for p in photos %}
+                    <div class="confession-item">
+                        <div class="confession-header-row">
+                            <div class="confession-meta">
+                                <span class="confession-author">
+                                    {% if p.user.username %}
+                                            <a href="https://www.instagram.com/{{ p.user.username }}" target="_blank">{{ p.user.username }}</a>
+                                    {% else %}
+                                        Anonymous
+                                    {% endif %}
+                                </span>
+                                <span class="confession-date">{{ p.created_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                            <div class="confession-actions-header">
+                                <a href="{{ p.image.url }}" target="_blank" class="btn btn-sm btn-primary">View</a>
+                            </div>
+                        </div>
+                        
+                        <div class="confession-content">
+                            <img src="{{ p.image.url }}" alt="Photo" style="max-width: 100%; height: auto; border-radius: 8px;">
+                        </div>
+                        
+                        <div class="confession-footer">
+                            <span class="confession-anonymous">ID: #{{ p.pk }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <p>No photos captured yet</p>
+        </div>
+    {% endif %}
+</div>
+</div>
+{% endblock %}

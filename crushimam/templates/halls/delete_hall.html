@@ -1,0 +1,15 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h2>Delete Hall Post</h2>
+        <p>Are you sure you want to delete "{{ post.title }}"?</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Yes, delete</button>
+            <a href="{% url 'hall_detail' pk=post.pk %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

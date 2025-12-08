@@ -1,0 +1,64 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>My Confession Requests</h1>
+        
+        {% if requests %}
+            <div class="requests-list">
+                {% for request in requests %}
+                    <div class="account-card">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3>{{ request.text|truncatewords:10 }}</h3>
+                                <span class="status-badge status-{{ request.status }}">{{ request.get_status_display|upper }}</span>
+                            </div>
+                            {% if request.status == 'pending' %}
+                                <a href="{% url 'cancel_confession_request' request.pk %}" class="btn btn-sm btn-secondary">Ilgha2</a>
+                            {% endif %}
+                        </div>
+                        
+                        <p>{{ request.text }}</p>
+                        
+                        {% if request.anonymous %}
+                            <p><em>Had post majhol</em></p>
+                        {% else %}
+                            <p><em>Had post b ismk</em></p>
+                        {% endif %}
+                        
+                        <span class="confession-anonymous"> ID: #{{ request.id }}</span>
+                        <div class="account-meta">
+                            F: {{ request.submitted_at|date:"F d, Y \a\t H:i" }}
+                        </div>
+                        
+                        {% if request.status == 'rejected' and request.rejection_reason %}
+                            <div class="rejection-reason" style="margin-top: 10px; background: #f8d7da; padding: 10px; border-radius: 6px; color: #721c24;">
+                                <strong>Sabab rofod:</strong>
+                                <p>{{ request.rejection_reason }}</p>
+                            </div>
+                        {% endif %}
+                        
+                        {% if request.status == 'approved' %}
+                            <div style="margin-top: 10px; background: #d4edda; padding: 10px; border-radius: 6px; color: #155724;">
+                                <small>✓ 9obila f {{ request.reviewed_at|date:"F d, Y" }}</small>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📝</div>
+                <h3>Ma kaynch chi talab</h3>
+                <p>Ba9i ma 3mlti chi talab dyal chi 3tiraf.</p>
+                <a href="{% url 'confession_request' %}" class="btn btn-primary" style="margin-top: 15px;">3ml l3tiraf dyalk lwl</a>
+            </div>
+        {% endif %}
+        
+        <div style="margin-top: 20px;">
+            <a href="{% url 'confessions_list' %}" class="btn btn-secondary">← Rojo3</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

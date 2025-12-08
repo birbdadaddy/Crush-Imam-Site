@@ -1,0 +1,106 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="confessions-wrapper">
+        <div class="confessions-header">
+            <h1>Confessions</h1>
+            <p class="confessions-subtitle">3tirafat ghamida mn community dyalna</p>
+            {% if user.is_staff %}
+                <a href="{% url 'pending_confessions' %}" class="btn btn-admin">Manage Requests</a>
+            {% endif %}
+            {% if user.is_authenticated %}
+            <a href="{% url 'confession_request' %}" class="btn btn-primary">Partagi l3tiraf dyalk</a>
+            <a href="{% url 'my_confession_requests' %}" class="btn btn-secondary">L3tirafat dyali</a>
+            {% else %}
+                <p class="login-prompt"><a href="/accounts/login">Login</a> bach tpartagi l3tiraf dyalk</p>
+            {% endif %}
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <form method="get" class="search-bar">
+                <input type="text" name="q" class="search-input" placeholder="Ftch wla ktb #id..." value="{{ search_query }}">
+                <button type="submit" class="search-btn">Ftch</button>
+            </form>
+            <p class="search-tip">💡 Nasi7a: Sta3ml <strong>#123</strong> bach tftch bsti3mal l ID</p>
+        </div>
+        
+        <!-- Filter controls -->
+        <div class="filter-controls">
+            <div class="filter-group">
+                <span class="filter-label">Saffii b:</span>
+                <a href="{% url 'confessions_list' %}?filter=all{% if search_query %}&q={{ search_query }}{% endif %}" class="filter-btn {% if filter_type == 'all' %}active{% endif %}">Kolchi</a>
+                <a href="{% url 'confessions_list' %}?filter=anonymous{% if search_query %}&q={{ search_query }}{% endif %}" class="filter-btn {% if filter_type == 'anonymous' %}active{% endif %}">Majholin</a>
+                <a href="{% url 'confessions_list' %}?filter=named{% if search_query %}&q={{ search_query }}{% endif %}" class="filter-btn {% if filter_type == 'named' %}active{% endif %}">M3roufin</a>
+            </div>
+        </div>
+        
+        {% if confessions %}
+            <div class="confessions-list">
+                {% for confession in confessions %}
+                    <div class="confession-item">
+                        <div class="confession-header-row">
+                            <div class="confession-meta">
+                                {% if not confession.anonymous and confession.posted_by %}
+                                    <span class="confession-author">
+                                        by <a href="https://www.instagram.com/{{ confession.posted_by.username }}/" target="_blank">
+                                            {{ confession.posted_by.username }}
+                                        </a>
+                                    </span>
+                                {% else %}
+                                    <span class="confession-anonymous">Majhol</span>
+                                {% endif %}
+                                <span class="confession-date">{{ confession.posted_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                            <div class="confession-actions-header">
+                                {% if user.is_staff or confession.posted_by == user %}
+                                    <a href="{% url 'delete_confession' confession.pk %}" class="btn btn-sm btn-danger">Msa7</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="confession-content">
+                            <p class="confession-text">{{ confession.text }}</p>
+                        </div>
+                        
+                        <div class="confession-footer">
+                            <a href="{% url 'confession_detail' confession.pk %}" class="confession-link">9ra ktar </a>
+                            <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+                <nav class="pagination">
+                    {% if confessions.has_previous %}
+                        <a href="?page=1&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first" title="First Page"></a>
+                        <a href="?page={{ confessions.previous_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                    {% else %}
+                        <span class="page-link disabled"></span>
+                        <span class="page-link disabled"> Previous</span>
+                    {% endif %}
+                    
+                    <span class="page-info">
+                        Page {{ confessions.number }} of {{ paginator.num_pages }}
+                    </span>
+                    
+                    {% if confessions.has_next %}
+                        <a href="?page={{ confessions.next_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                        <a href="?page={{ paginator.num_pages }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last" title="Last Page"></a>
+                    {% else %}
+                        <span class="page-link disabled">Next </span>
+                        <span class="page-link disabled"></span>
+                    {% endif %}
+                </nav>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Ma kayn 7ta 3tiraf. Kon awl wa7d!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

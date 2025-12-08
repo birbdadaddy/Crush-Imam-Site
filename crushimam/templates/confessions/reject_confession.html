@@ -1,0 +1,33 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Reject Confession</h1>
+        
+        <div class="account-card">
+            <h3>Submission to Review:</h3>
+            <p>{{ request.text }}</p>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <p><strong>Submitted by:</strong> {{ request.submitted_by.username }}</p>
+                <p style="color: #999; font-size: 0.9rem;">Submitted: {{ request.submitted_at|date:"F d, Y \a\t H:i" }}</p>
+            </div>
+        </div>
+        
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="reason"><strong>Reason for Rejection (optional)</strong></label>
+                <textarea name="reason" id="reason" rows="4" placeholder="Explain why this was rejected..." class="form-control" style="width: 100%; padding: 10px; border: 2px solid #e63946; border-radius: 6px; font-family: Arial; font-size: 0.95rem;"></textarea>
+                <small class="form-help">This reason will be shown to the user who submitted it</small>
+            </div>
+            
+            <div class="account-actions" style="margin-top: 20px;">
+                <button type="submit" class="btn btn-danger btn-large">Reject & Notify User</button>
+                <a href="{% url 'pending_confessions' %}" class="btn btn-secondary">Back to Pending</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

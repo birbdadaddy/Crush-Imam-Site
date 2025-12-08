@@ -1,0 +1,39 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="confessions-wrapper">
+        <h1>News</h1>
+        {% if news_list %}
+            <div class="confessions-list">
+                {% for item in news_list %}
+                    <div class="confession-item">
+                        <h3>{{ item.title }}</h3>
+                        {% if item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ p.title }}" style="max-width:100%; height:auto; margin:10px 0; border-radius:6px;">
+                        {% endif %}
+                        <p class="confession-text">{{ item.body|truncatewords:40 }}</p>
+                        <div class="confession-footer">
+                            <a href="{% url 'news_detail' item.pk %}" class="confession-link">9ra ktar</a>
+                            {% if user.is_staff %}
+                            <form method="post" action="{% url 'news_delete' pk=item.pk %}" style="display:inline; margin-left:10px;" onsubmit="return confirm('Delete this news post?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                            </form>
+                            {% endif %}
+                            <span class="confession-date">{{ item.created_at|date:"F d, Y" }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>Makaynch akhbar.</p>
+            </div>
+        {% endif %}
+        {% if user.is_staff %}
+            <a href="{% url 'news_create' %}" class="btn btn-admin" style="margin-top:20px;">Create News</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

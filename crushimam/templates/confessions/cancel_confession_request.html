@@ -1,0 +1,26 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Cancel Confession Request</h1>
+        
+        <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #856404;"><strong>⚠️ Ta7dir:</strong> Had l3amaliya 3atlghi post. Ladmins dyalna y9dro ychofoha ms ma ghadich tposta.</p>
+        </div>
+        
+        <div class="account-card">
+            <h3>L3tiraf:</h3>
+            <p>{{ request.text }}</p>
+        </div>
+        
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div class="account-actions">
+                <button type="submit" class="btn btn-danger btn-large">Motaba3a</button>
+                <a href="{% url 'my_confession_requests' %}" class="btn btn-secondary">Rojo3</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

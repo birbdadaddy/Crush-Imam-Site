@@ -1,0 +1,56 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <a href="{% url 'confessions_list' %}" class="btn btn-secondary btn-back">← Back to Confessions</a>
+    
+    <div class="profile-detail-wrapper">
+        <div class="profile-header">
+            <div class="profile-picture">
+                {% if profile.photo %}
+                    <img src="{{ profile.photo.url }}" alt="{{ profile.user.username }}" class="profile-img">
+                {% else %}
+                    <div class="profile-img-placeholder">{{ profile.user.username|first|upper }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="profile-info">
+                <h1 class="profile-name">{{ profile.user.username }}</h1>
+                {% if profile.instagram_username %}
+                    <p class="profile-instagram">
+                        <a href="https://instagram.com/{{ profile.instagram_username }}" target="_blank" class="instagram-link">
+                            @{{ profile.instagram_username }}
+                        </a>
+                    </p>
+                {% endif %}
+                {% if profile.bio %}
+                    <p class="profile-bio">{{ profile.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="profile-confessions">
+            <h2>Confessions by {{ profile.user.username }}</h2>
+            {% if confessions %}
+                <div class="confessions-list">
+                    {% for confession in confessions %}
+                        <div class="confession-item">
+                            <div class="confession-content">
+                                <p class="confession-text">{{ confession.text|truncatewords:50 }}</p>
+                            </div>
+                            <div class="confession-footer">
+                                <span class="confession-date">{{ confession.posted_at|date:"M d, Y H:i" }}</span>
+                                <a href="{% url 'confession_detail' confession.pk %}" class="confession-link">Read Full →</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No confessions from this user yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

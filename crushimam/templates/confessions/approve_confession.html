@@ -1,0 +1,27 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Approve Confession</h1>
+        
+        <div class="account-card">
+            <h3>Submission Details:</h3>
+            <p>{{ request.text }}</p>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <p><strong>Submitted by:</strong> {{ request.submitted_by.username }}</p>
+                <p><strong>Type:</strong> <span class="status-badge status-{% if request.anonymous %}cancelled{% else %}approved{% endif %}">{% if request.anonymous %}Anonymous{% else %}Named{% endif %}</span></p>
+                <p style="color: #999; font-size: 0.9rem;">Submitted: {{ request.submitted_at|date:"F d, Y \a\t H:i" }}</p>
+            </div>
+        </div>
+        
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div class="account-actions">
+                <button type="submit" class="btn btn-success btn-large">Approve & Post to Community</button>
+                <a href="{% url 'pending_confessions' %}" class="btn btn-secondary">Back to Pending</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

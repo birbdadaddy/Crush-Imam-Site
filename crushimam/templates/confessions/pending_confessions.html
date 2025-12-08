@@ -1,0 +1,177 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="admin-panel">
+        <h1>Admin: Pending Confessions</h1>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <form method="get" class="search-bar">
+                <input type="text" name="q" class="search-input" placeholder="Search confessions or type #id..." value="{{ search_query }}">
+                <button type="submit" class="search-btn">Search</button>
+            </form>
+            <p class="search-tip">💡 Tip: Use <strong>#123</strong> to search by request ID</p>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab-content">
+                <h2 class="tab-title">Pending Review ({{ pending_paginator.count }})</h2>
+                {% if pending %}
+                    <div class="confessions-list">
+                        {% for confession in pending %}
+                            <div class="confession-card pending">
+                                <div class="confession-header">
+                                    <small class="submitted-by">Submitted by: {{ confession.submitted_by.username }}</small>
+                                    <small class="submitted-date">{{ confession.submitted_at|date:"M d, Y H:i" }}</small>
+                                </div>
+                                <div class="confession-text">
+                                    <p>{{ confession.text }}</p>
+                                </div>
+                                <div class="confession-meta">
+                                    <span class="badge">{% if confession.anonymous %}Anonymous{% else %}Named{% endif %}</span>
+                                </div>
+                                <div class="confession-actions">
+                                    <form method="post" action="{% url 'approve_confession' confession.pk %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success">Approve</button>
+                                    </form>
+                                    <a href="{% url 'reject_confession' confession.pk %}" class="btn btn-danger">Reject</a>
+                                </div>
+                                <div class="confession-footer">
+                                    <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Pagination for pending -->
+                    <div class="pagination-wrapper">
+                        <nav class="pagination">
+                            {% if pending.has_previous %}
+                                <a href="?pending_page=1{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first"></a>
+                                <a href="?pending_page={{ pending.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                            {% else %}
+                                <span class="page-link disabled"></span>
+                                <span class="page-link disabled"> Previous</span>
+                            {% endif %}
+                            <span class="page-info">Page {{ pending.number }} of {{ pending_paginator.num_pages }}</span>
+                            {% if pending.has_next %}
+                                <a href="?pending_page={{ pending.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                                <a href="?pending_page={{ pending_paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last"></a>
+                            {% else %}
+                                <span class="page-link disabled">Next </span>
+                                <span class="page-link disabled"></span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <p>No pending confessions to review.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="tabs" style="margin-top: 40px;">
+            <div class="tab-content">
+                <h2 class="tab-title">Approved ({{ approved_paginator.count }})</h2>
+                {% if approved %}
+                    <div class="confessions-list">
+                        {% for confession in approved %}
+                            <div class="confession-card approved">
+                                <div class="confession-header">
+                                    <small class="submitted-by">Submitted by: {{ confession.submitted_by.username }}</small>
+                                    <small class="submitted-date">Approved by {{ confession.reviewed_by.username }} on {{ confession.reviewed_at|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="confession-text">
+                                    <p>{{ confession.text }}</p>
+                                </div>
+                                <div class="confession-footer">
+                                    <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Pagination for approved -->
+                    <div class="pagination-wrapper">
+                        <nav class="pagination">
+                            {% if approved.has_previous %}
+                                <a href="?approved_page=1{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first"></a>
+                                <a href="?approved_page={{ approved.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                            {% else %}
+                                <span class="page-link disabled"></span>
+                                <span class="page-link disabled"> Previous</span>
+                            {% endif %}
+                            <span class="page-info">Page {{ approved.number }} of {{ approved_paginator.num_pages }}</span>
+                            {% if approved.has_next %}
+                                <a href="?approved_page={{ approved.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                                <a href="?approved_page={{ approved_paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last"></a>
+                            {% else %}
+                                <span class="page-link disabled">Next </span>
+                                <span class="page-link disabled"></span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <p>No approved confessions yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="tabs" style="margin-top: 40px;">
+            <div class="tab-content">
+                <h2 class="tab-title">Rejected ({{ rejected_paginator.count }})</h2>
+                {% if rejected %}
+                    <div class="confessions-list">
+                        {% for confession in rejected %}
+                            <div class="confession-card rejected">
+                                <div class="confession-header">
+                                    <small class="submitted-by">Submitted by: {{ confession.submitted_by.username }}</small>
+                                    <small class="submitted-date">Rejected by {{ confession.reviewed_by.username }} on {{ confession.reviewed_at|date:"M d, Y" }}</small>
+                                </div>
+                                <div class="confession-text">
+                                    <p>{{ confession.text }}</p>
+                                </div>
+                                {% if confession.rejection_reason %}
+                                    <div class="rejection-reason">
+                                        <strong>Reason:</strong> {{ confession.rejection_reason }}
+                                    </div>
+                                {% endif %}
+                                <div class="confession-footer">
+                                    <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Pagination for rejected -->
+                    <div class="pagination-wrapper">
+                        <nav class="pagination">
+                            {% if rejected.has_previous %}
+                                <a href="?rejected_page=1{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first"></a>
+                                <a href="?rejected_page={{ rejected.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                            {% else %}
+                                <span class="page-link disabled"></span>
+                                <span class="page-link disabled"> Previous</span>
+                            {% endif %}
+                            <span class="page-info">Page {{ rejected.number }} of {{ rejected_paginator.num_pages }}</span>
+                            {% if rejected.has_next %}
+                                <a href="?rejected_page={{ rejected.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                                <a href="?rejected_page={{ rejected_paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last"></a>
+                            {% else %}
+                                <span class="page-link disabled">Next </span>
+                                <span class="page-link disabled"></span>
+                            {% endif %}
+                        </nav>
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <p>No rejected confessions.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

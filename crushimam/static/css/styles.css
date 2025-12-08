@@ -1,0 +1,1711 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    color: #333;
+}
+
+
+/* Header and Navigation */
+
+.header {
+    background: #e63946;
+    color: #fff;
+    padding: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    width: 100%;
+    background: #e63946;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px 20px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+    margin-right: 30px;
+}
+
+.logo:hover {
+    opacity: 0.9;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 5px;
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    display: block;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: #d62828;
+}
+
+header {
+    background: #e63946;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.tagline {
+    font-size: 1.2rem;
+    margin-top: 5px;
+}
+
+.hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: #fff;
+}
+
+#cta-btn {
+    padding: 15px 30px;
+    background: #e63946;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.features {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    padding: 40px 40px;
+}
+
+.feature {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+
+/* Footer Styling */
+
+footer {
+    background: linear-gradient(135deg, #e63946, #d62828);
+    color: #fff;
+    margin-top: 60px;
+    padding: 50px 20px 30px 20px;
+    border-top: 3px solid #b71f1f;
+}
+
+footer p {
+    margin: 12px 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+footer a:hover {
+    border-bottom-color: #fff;
+    opacity: 0.9;
+}
+
+footer .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+footer .footer-section {
+    margin-bottom: 20px;
+}
+
+footer .footer-divider {
+    width: 50px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+    margin: 15px auto;
+}
+
+
+/* Container and Layout */
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+
+/* Forms */
+
+.form-wrapper {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+.form-subtitle {
+    color: #666;
+    font-size: 1rem;
+    margin-bottom: 25px;
+}
+
+.confession-form,
+.rejection-form,
+.approval-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.form-control,
+.form-group textarea,
+.form-group input[type="text"] {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus,
+.form-group textarea:focus,
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: #e63946;
+    box-shadow: 0 0 5px rgba(230, 57, 70, 0.2);
+}
+
+.checkbox-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-group label {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.form-checkbox {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.form-help {
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.error-message {
+    color: #d62828;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+
+/* Buttons */
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: #e63946;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #d62828;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(230, 57, 70, 0.3);
+}
+
+.btn-secondary {
+    background: #999;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+.btn-success {
+    background: #28a745;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #218838;
+}
+
+.btn-danger {
+    background: #d62828;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background: #b71f1f;
+}
+
+
+/* Comments and Votes */
+
+.comments {
+    background: #fff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-item {
+    background: #f8f8f8;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.comment-meta {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 6px;
+}
+
+.comment-body {
+    color: #333;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+.vote-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vote {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.vote.up {
+    color: #2b8a3e;
+}
+
+.vote.down {
+    color: #b82a2a;
+}
+
+.vote-count {
+    font-weight: 700;
+    color: #333;
+}
+
+
+/* Like button styling and simple animation */
+
+.like-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.15rem;
+    cursor: pointer;
+    color: #888;
+    padding: 6px 8px;
+    border-radius: 6px;
+    transition: transform 0.12s ease, color 0.18s ease;
+    line-height: 1;
+}
+
+.like-btn.small {
+    font-size: 0.95rem;
+    padding: 4px 6px;
+}
+
+.like-btn.liked {
+    color: #e63946;
+    transform: scale(1.06);
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.45);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.like-btn.pop {
+    animation: pop 260ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.replies {
+    margin-left: 12px;
+}
+
+.btn-large {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+}
+
+.btn-small {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-admin {
+    background: #6c757d;
+    color: #fff;
+}
+
+.btn-admin:hover {
+    background: #5a6268;
+}
+
+
+/* Success State */
+
+.success-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+    padding: 20px;
+}
+
+.success-card {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 500px;
+}
+
+.success-card h1 {
+    color: #28a745;
+    margin-top: 0;
+}
+
+.success-info {
+    color: #666;
+    margin: 15px 0;
+}
+
+
+/* Public Confessions List */
+
+.confessions-wrapper {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+.confessions-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e63946;
+}
+
+.confessions-header h1 {
+    color: #333;
+    margin: 0 0 10px 0;
+}
+
+.confessions-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.login-prompt {
+    color: #666;
+    margin: 0;
+}
+
+.login-prompt a {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}
+
+.confessions-list {
+    display: grid;
+    gap: 20px;
+}
+
+.confession-item {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 5px solid #e63946;
+    transition: all 0.3s ease;
+}
+
+.confession-item:hover {
+    box-shadow: 0 4px 12px rgba(230, 57, 70, 0.15);
+    transform: translateY(-2px);
+}
+
+.confession-content {
+    margin-bottom: 15px;
+}
+
+.confession-text {
+    color: #333;
+    line-height: 1.7;
+    font-size: 1rem;
+    margin: 0;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.confession-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.confession-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 0.9rem;
+    color: #999;
+    flex-wrap: wrap;
+}
+
+.confession-author {
+    color: #666;
+}
+
+.confession-author a {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.confession-author a:hover {
+    text-decoration: underline;
+}
+
+.confession-anonymous {
+    color: #999;
+    font-style: italic;
+}
+
+.confession-date {
+    color: #999;
+}
+
+.confession-link {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.confession-link:hover {
+    color: #d62828;
+    text-decoration: underline;
+}
+
+
+/* Empty State */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+
+/* Requests and Confessions Lists */
+
+.requests-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.request-card,
+.confession-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #e63946;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.request-card.request-pending,
+.confession-card.pending {
+    border-left-color: #ffc107;
+    background: #fffbf0;
+}
+
+.request-card.request-approved,
+.confession-card.approved {
+    border-left-color: #28a745;
+    background: #f0fdf4;
+}
+
+.request-card.request-rejected,
+.confession-card.rejected {
+    border-left-color: #d62828;
+    background: #fdf0f0;
+}
+
+.request-header,
+.confession-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.request-date,
+.submitted-date,
+.submitted-by {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.request-body,
+.confession-text {
+    margin: 12px 0;
+    color: #333;
+    line-height: 1.6;
+}
+
+.confession-meta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-block;
+    background: #e63946;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.rejection-reason {
+    margin-top: 12px;
+    padding: 12px;
+    background: #ffe6e6;
+    border-radius: 6px;
+    border-left: 3px solid #d62828;
+}
+
+.rejection-reason strong {
+    color: #d62828;
+}
+
+.approval-info {
+    margin-top: 10px;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+
+/* Admin Panel */
+
+.admin-panel {
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.admin-panel h1 {
+    color: #333;
+    margin-top: 0;
+}
+
+.tabs {
+    margin: 20px 0;
+}
+
+.tab-title {
+    color: #333;
+    border-bottom: 2px solid #e63946;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-content {
+    padding: 15px 0;
+}
+
+.confession-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.form-info {
+    color: #666;
+    margin: 15px 0;
+}
+
+
+/* Small buttons */
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+}
+
+
+/* Warning button */
+
+.btn-warning {
+    background: #ffc107;
+    color: #333;
+}
+
+.btn-warning:hover {
+    background: #e0a800;
+}
+
+
+/* Warning and info boxes */
+
+.warning-box {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #856404;
+}
+
+.warning-box p {
+    margin: 0;
+}
+
+
+/* Header row layout for actions */
+
+.confession-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.confession-actions-header {
+    display: flex;
+    gap: 8px;
+}
+
+
+/* Status badge styling updates */
+
+.status-cancelled {
+    background: #e9ecef;
+    color: #495057;
+}
+
+
+/* Deletion and cancellation form styling */
+
+.deletion-form,
+.cancellation-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+/* Filter Controls */
+
+.filter-controls {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 25px;
+    border: 1px solid #eee;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-label {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+.filter-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #fff;
+    color: #333;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.filter-btn:hover {
+    border-color: #e63946;
+    color: #e63946;
+}
+
+.filter-btn.active {
+    background: #e63946;
+    color: #fff;
+    border-color: #e63946;
+}
+
+
+/* Pagination */
+
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    /* never wrap: keep pagination in a single row */
+    flex-wrap: nowrap;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.page-link {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #fff;
+    color: #e63946;
+    border: 1px solid #e63946;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    flex: 0 0 auto;
+}
+
+.page-link:hover:not(.disabled) {
+    background: #e63946;
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.page-link.disabled {
+    color: #ccc;
+    border-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.page-link.first,
+.page-link.last {
+    font-weight: bold;
+}
+
+.page-info {
+    padding: 0 15px;
+    color: #666;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+
+/* Ensure pagination container can scroll horizontally on very small screens instead of wrapping */
+
+.pagination-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* Reduce padding slightly on very small screens to help keep everything in one row */
+
+@media (max-width: 480px) {
+    .page-link {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+    }
+    .page-info {
+        padding: 0 8px;
+        font-size: 0.85rem;
+    }
+}
+
+
+/* User Menu and Logout */
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.user-greeting {
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.logout-link {
+    background-color: #d62828;
+    padding: 8px 15px !important;
+    border-radius: 4px;
+    font-size: 0.85rem !important;
+}
+
+.logout-link:hover {
+    background-color: #b71f1f !important;
+}
+
+
+/* Login Page */
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+    padding: 40px 20px;
+}
+
+.login-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.login-card h1 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 0.95rem;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-errors {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+
+.error-message {
+    color: #721c24;
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.login-footer p {
+    color: #666;
+    margin: 0;
+}
+
+.login-footer a {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-footer a:hover {
+    text-decoration: underline;
+}
+
+
+/* Confession Detail Page */
+
+.confession-detail-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+.btn-back {
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.confession-detail-card {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.confession-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-bottom: 2px solid #e63946;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.author-info {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+}
+
+.author-link {
+    display: flex;
+    gap: 15px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #e63946;
+}
+
+.anonymous-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #e63946;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.author-details h3 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.author-bio {
+    margin: 5px 0 0 0;
+    color: #666;
+    font-size: 0.9rem;
+    max-width: 300px;
+}
+
+.confession-meta-detail {
+    text-align: right;
+}
+
+.confession-date {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.confession-detail-content {
+    padding: 30px;
+    background: #fff;
+}
+
+.confession-full-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+.confession-detail-footer {
+    padding: 20px;
+    background: #f9f9f9;
+    border-top: 1px solid #eee;
+    text-align: right;
+}
+
+
+/* Profile Detail Page */
+
+.profile-detail-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+.profile-header {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #e63946;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.profile-picture {
+    flex-shrink: 0;
+}
+
+.profile-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 4px solid #e63946;
+}
+
+.profile-img-placeholder {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #e63946, #d62828);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.profile-info h1 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.profile-name {
+    font-size: 2rem;
+}
+
+.profile-instagram {
+    margin: 5px 0;
+}
+
+.instagram-link {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.instagram-link:hover {
+    text-decoration: underline;
+}
+
+.profile-bio {
+    margin: 10px 0 0 0;
+    color: #666;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+.profile-confessions h2 {
+    color: #333;
+    margin: 20px 0;
+}
+
+
+/* Improved Button Styling */
+
+.btn-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+
+/* Account Pages Styling */
+
+.account-wrapper {
+    background: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0;
+}
+
+.account-card {
+    background: #fff;
+    border-radius: 8px;
+    border-left: 4px solid #e63946;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.account-card h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.account-card p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+
+.account-card .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-cancelled {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.account-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.account-meta {
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+
+/* Search Bar Styling */
+
+.search-container {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #e63946;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+
+.search-input::placeholder {
+    color: #999;
+}
+
+.search-btn {
+    background: #e63946;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.search-btn:hover {
+    background: #d62828;
+}
+
+.search-tip {
+    font-size: 0.85rem;
+    color: #999;
+    margin-top: 8px;
+}
+
+.search-tip strong {
+    color: #e63946;
+}
+
+
+/* Tab Navigation */
+
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid #eee;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #999;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+    color: #e63946;
+}
+
+.tab-button.active {
+    color: #e63946;
+    border-bottom-color: #e63946;
+}
+
+.tab-content {
+    display: block;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+
+/* Empty State */
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.empty-state h3 {
+    color: #666;
+    margin: 10px 0;
+}
+
+.empty-state p {
+    color: #999;
+    margin: 5px 0;
+}
+
+
+/* Responsive Footer */
+
+@media (max-width: 768px) {
+    footer {
+        padding: 40px 15px 25px 15px;
+    }
+    footer p {
+        font-size: 0.9rem;
+    }
+    footer a {
+        display: inline-block;
+        word-break: break-word;
+    }
+}
+
+
+/* Navbar Dropdown */
+
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown>.nav-link {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #d62828;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 0;
+    border-radius: 4px;
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.nav-dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 12px 15px;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: #b71f1f;
+}
+
+
+/* Form Styling for News and Halls */
+
+form.confession-form {
+    background: #f9f9f9;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+form p {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+form label {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+form input,
+form textarea,
+form select {
+    padding: 12px;
+    border: 2px solid #e63946;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: Arial, sans-serif;
+    transition: all 0.3s ease;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+
+form input[type=\"file\"] {
+ padding: 8px;
+border: 2px dashed #e63946;
+border-radius: 6px;
+background: #fff;
+cursor: pointer;
+
+}
+form input[type=\"file\"]:hover {
+ background: #f9f9f9;
+
+}
+
+/* Allauth Forms Styling */
+.account-form {
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 30px auto;
+}
+.account-form h1,
+.account-form h2 {
+    color: #333;
+    margin-bottom: 30px;
+    text-align: center;
+}
+.account-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.account-form input,
+.account-form input[type=\"email\"],
+ .account-form input[type=\"password\"],
+ .account-form input[type=\"username\"] {
+ padding: 12px;
+border: 2px solid #e63946;
+border-radius: 6px;
+font-size: 1rem;
+transition: all 0.3s ease;
+
+}
+.account-form input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+}
+.account-form button {
+    background: #e63946;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.account-form button:hover {
+    background: #d62828;
+    transform: translateY(-2px);
+}
+.account-form p {
+    text-align: center;
+    color: #666;
+    margin: 15px;
+    display: flex;
+}
+.account-form a {
+    color: #e63946;
+    text-decoration: none;
+    font-weight: bold;
+    display: flex;
+    padding: 5px;
+}
+.account-form a:hover {
+    text-decoration: underline;
+}
+.account-form ul {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+.account-form li {
+    color: #721c24;
+    font-size: 0.9rem;
+    margin: 5px 0;
+}
+.account-form .errorlist {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 15px;
+}
+.account-form .errorlist li {
+    color: #721c24;
+}
+
+/* Allauth specific pages */
+.allauth-login,
+.allauth-signup,
+.allauth-password-reset {
+    min-height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7f7f7;
+}
+.allauth-login-form,
+.allauth-signup-form,
+.allauth-password-reset-form {
+    background: #fff;
+    border-radius: 10px;
+    padding: 40px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+}
+
+/* Responsive forms */
+@media (max-width: 768px) {
+    .account-form,
+    .allauth-login-form,
+    .allauth-signup-form,
+    .allauth-password-reset-form {
+        padding: 30px 20px;
+        margin: 20px;
+    }
+    form input,
+    form textarea,
+    form select {
+        font-size: 16px;
+    }
+}

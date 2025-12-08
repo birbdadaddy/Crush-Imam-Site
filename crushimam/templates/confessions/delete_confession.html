@@ -1,0 +1,29 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Delete Confession</h1>
+        
+        <div style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #721c24;"><strong>⚠️ Ta7dir:</strong> Had l3amaliya ma katrja3chi. L3tiraf 3aytmsa7 mn community bi chaklin kamil.</p>
+        </div>
+        
+        <div class="account-card">
+            <h3>L3tiraf li 3aytmsa7:</h3>
+            <p>{{ confession.text }}</p>
+            <div class="account-meta" style="margin-top: 10px;">
+                Posted: {{ confession.posted_at|date:"F d, Y \a\t H:i" }}
+            </div>
+        </div>
+        
+        <form method="post" style="margin-top: 20px;">
+            {% csrf_token %}
+            <div class="account-actions">
+                <button type="submit" class="btn btn-danger btn-large">Motaba3a</button>
+                <a href="{% url 'confession_detail' confession.pk %}" class="btn btn-secondary">Rojo3</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

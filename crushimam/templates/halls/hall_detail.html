@@ -1,0 +1,120 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="confession-detail-wrapper">
+        <a href="{% url 'hall_list' category=post.category %}" class="btn btn-secondary btn-back">← Rojo3</a>
+        <div class="confession-detail-card">
+            <div class="confession-item">
+                <div class="author-details">
+                    {% if user.is_staff %}
+                    <div class="confession-meta-detail" style="margin-left:10px;">
+                        <form method="post" action="{% url 'hall_delete' pk=post.pk %}" onsubmit="return confirm('Are you sure you want to delete this hall post?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    <h2>{{ post.title }}</h2>
+                    <p class="confession-date">{{ post.created_at|date:"F d, Y \a\t H:i" }}</p>
+                </div>
+                {% if post.image %}
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%; height:auto; margin-bottom:20px; border-radius:6px;">
+                {% endif %}
+                <p class="confession-full-text">{{ post.body|linebreaks }}</p>
+            </div>
+            <div class="confession-detail-content">
+                <div class="votes" style="margin-top:1rem">
+                    <form method="post" action="{% url 'add_vote' %}" class="vote-form like-control">
+                        {% csrf_token %}
+                        <input type="hidden" name="model" value="hallpost">
+                        <input type="hidden" name="object_id" value="{{ post.pk }}">
+                        <button type="submit" class="like-btn {% if user.is_authenticated and user_liked %}liked{% endif %}" title="Like">❤</button>
+                        <span class="vote-count">{{ post.vote_total|default:0 }}</span>
+                    </form>
+                </div>
+
+                <div class="comments" style="margin-top:1.5rem">
+                    <h4>Comments</h4>
+                    <div class="comment-list">
+                        {% for c in no_reply_comments %}
+                            <div class="comment-item">
+                                <div class="comment-meta">{% if c.user %}{{ c.user.username }}{% else %}Majhol{% endif %} • {{ c.created_at|date:'Y-m-d H:i' }}</div>
+                                <div class="comment-body">{{ c.body }}</div>
+                                <div class="comment-actions" style="margin-top:.5rem; display:flex; gap:8px; align-items:center">
+                                    <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="model" value="comment">
+                                        <input type="hidden" name="object_id" value="{{ c.pk }}">
+                                        <button type="submit" class="like-btn small {% if user.is_authenticated and c.pk in liked_comment_ids %}liked{% endif %}">❤</button>
+                                        <span class="vote-count">{{ c.like_count }}</span>
+                                    </form>
+                                    {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'add_comment' %}" class="reply-form" style="display:inline-block;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="model" value="hallpost">
+                                        <input type="hidden" name="object_id" value="{{ post.pk }}">
+                                        <input type="hidden" name="parent_id" value="{{ c.pk }}">
+                                        <input type="text" name="body" placeholder="ktb reply..." required style="padding:6px 8px; border-radius:6px; border:1px solid #ddd;">
+                                        <button type="submit" class="btn btn-small" style="margin-left:6px">Reply</button>
+                                    </form>
+                                    {% endif %}
+                                    {% if c.user == user or user.is_staff %}
+                                        <a href="{% url "delete_comment" c.pk %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn btn-danger btn-small">Msa7</a>
+                                    {% endif %}
+                                </div>
+
+                                {% if c.replies.all %}
+                                    <div class="replies" style="margin-top:.75rem; margin-left:12px">
+                                        {% for r in c.replies.all %}
+                                            <div class="comment-item" style="background:#fff; padding:8px;">
+                                                <div class="comment-meta">{% if r.user %}{{ r.user.username }}{% else %}Majhol{% endif %} • {{ r.created_at|date:'Y-m-d H:i' }}</div>
+                                                <div class="comment-body">{{ r.body }}</div>
+                                                <div class="comment-actions" style="margin-top:.5rem; display:flex; gap:8px; align-items:center">
+                                                    <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="model" value="comment">
+                                                        <input type="hidden" name="object_id" value="{{ r.pk }}">
+                                                        <button type="submit" class="like-btn small {% if user.is_authenticated and r.pk in liked_comment_ids %}liked{% endif %}">❤</button>
+                                                        <span class="vote-count">{{ r.like_count }}</span>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p class="muted">Ma kayn 7ta comment.</p>
+                        {% endfor %}
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
+                        {% csrf_token %}
+                        <input type="hidden" name="model" value="hallpost">
+                        <input type="hidden" name="object_id" value="{{ post.pk }}">
+                        <textarea name="body" rows="3" placeholder="ktb comment dyalk..." required></textarea>
+                        <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Sifet</button>
+                    </form>
+                    {% else %}
+                        <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+    (function(){
+        document.querySelectorAll('.like-btn').forEach(function(btn){
+            btn.addEventListener('click', function(e){
+                e.preventDefault();
+                var form = btn.closest('form');
+                btn.classList.add('pop');
+                setTimeout(function(){ btn.classList.remove('pop'); if(form) form.submit(); }, 180);
+            });
+        });
+    })();
+    </script>
+{% endblock %}

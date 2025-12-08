@@ -1,0 +1,17 @@
+{% extends 'crushimam/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="account-wrapper">
+        <h1>Create Hall Post</h1>
+        <form method="post" enctype="multipart/form-data" class="confession-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="account-actions">
+                <button type="submit" class="btn btn-primary">Publish</button>
+                <a href="{% url 'hall_list' category='fame' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
