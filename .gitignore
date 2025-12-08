@@ -1,2 +1,8 @@
 venv/
 .vscode/
+crushimam/__pycache__/
+crushimam/confessions/migrations/__pycache__/
+crushimam/halls/migrations/__pycache__/
+crushimam/staticfiles/
+crushimam/media/
+db.sqlite3
