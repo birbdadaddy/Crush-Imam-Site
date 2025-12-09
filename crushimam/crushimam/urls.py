@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('confessions.urls')),
+    path('privacy-policy/', views.privacy_and_policy, name='privacy_and_policy'),
 ]
 
 if settings.DEBUG:

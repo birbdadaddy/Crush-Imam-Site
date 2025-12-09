@@ -7,6 +7,14 @@
     <title>Crush Imam</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
     <link rel="stylesheet" href="{% static 'css/mobile.css' %}" />
+    <script src="https://richinfo.co/richpartners/pops/js/richads-pu-ob.js" data-pubid="995761" data-siteid="380602" as>
+    <script src="https://cmp.gatekeeperconsent.com/min.js" data-cfasync="false"></script>
+    <script src="https://the.gatekeeperconsent.com/cmp.min.js" data-cfasync="false"></script>
+    <script async src="//www.ezojs.com/ezoic/sa.min.js"></script>
+    <script>
+        window.ezstandalone = window.ezstandalone || {};
+        ezstandalone.cmd = ezstandalone.cmd || [];
+    </script>
 </head>
 <body>
     <header class="header">
@@ -45,8 +53,10 @@
 
     <div id="mobileOverlay" class="mobile-overlay" aria-hidden="true"></div>
 
+    <div id="ezoic-pub-ad-placeholder-101"></div>
     {% block content %}
     {% endblock %}
+    <div id="ezoic-pub-ad-placeholder-100"></div>
 
     <footer>
         <div class="footer-content">
@@ -61,6 +71,32 @@
         </div>
     </footer>
 
+    <script>
+        ezstandalone.cmd.push(function () {
+            ezstandalone.showAds(100, 101);
+        });
+    </script>
+    <script>
+        // Initialize Ezoic Rewarded Ads
+window.ezRewardedAds = window.ezRewardedAds || {};
+window.ezRewardedAds.cmd = window.ezRewardedAds.cmd || [];
+
+// Example: Request a rewarded ad with overlay
+window.ezRewardedAds.cmd.push(function () {
+    window.ezRewardedAds.requestWithOverlay(function (result) {
+        if (result.status) {
+            console.log("Ad loaded successfully");
+            if (result.reward) {
+                // User completed the ad and earned reward
+                console.log("User earned reward!");
+                // Add your reward logic here
+            }
+        } else {
+            console.log("Ad failed to load:", result.msg);
+        }
+    });
+});
+</script>
     <script>
         // Mobile menu + overlay toggle with improved UX
         (function(){
