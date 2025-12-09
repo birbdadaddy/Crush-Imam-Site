@@ -10,11 +10,10 @@
 
         <form class="account-form" method="POST" action="{% url 'account_signup' %}">
             {% csrf_token %}
+            <p>Khso ykon Username dyalk nfs dyal instagram.<p>
             {{ form.as_p }}
             
-            {% if redirect_field_value %}
-            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-            {% endif %}
+            <input type="hidden" name="{% url 'account_login' %}" value="{% url 'account_login' %}" />
             
             <button type="submit">{% trans "Sign Up" %}</button>
         </form>

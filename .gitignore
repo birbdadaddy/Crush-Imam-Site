@@ -1,8 +1,7 @@
+# Created by venv; see https://docs.python.org/3/library/venv.html
 venv/
 .vscode/
-crushimam/__pycache__/
-crushimam/confessions/migrations/__pycache__/
-crushimam/halls/migrations/__pycache__/
-crushimam/staticfiles/
+crushimam/db.sqlite3
+crushimam/confessions/__pycache__/
+crushimam/crushimam/__pycache__/
 crushimam/media/
-db.sqlite3

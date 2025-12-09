@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l6_d9zyd4j8(hc!dku$lk6#j$r3&-40aub58q!fw6vto&ghsdy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['157.250.198.78']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # sites framework required by django-allauth
     'django.contrib.sites',
+
+    # 'django-extensions',
 
     # django-allauth apps
     'allauth',
@@ -80,6 +82,9 @@ TEMPLATES = [
 LOGIN_REDIRECT_URL = '/confession/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'account_login'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 # Required by django-allauth
 SITE_ID = 1
