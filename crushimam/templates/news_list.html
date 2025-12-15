@@ -3,36 +3,92 @@
 {% block content %}
 <div class="container">
     <div class="confessions-wrapper">
-        <h1>News</h1>
+        <div class="confessions-header">
+            <h1>News</h1>
+        </div>
         {% if news_list %}
             <div class="confessions-list">
                 {% for item in news_list %}
-                    <div class="confession-item">
-                        <h3>{{ item.title }}</h3>
+                    <div class="confession-item" role="link" onclick="window.location.href='{% url 'news_detail' item.pk %}';">
                         {% if item.image %}
-                            <img src="{{ item.image.url }}" alt="{{ p.title }}" style="max-width:100%; height:auto; margin:10px 0; border-radius:6px;">
+                        <div class="post-image-wrapper">
+                            <img src="{{ item.image.url }}" alt="{{ item.title }}" class="post-image">
+                        </div>
                         {% endif %}
-                        <p class="confession-text">{{ item.body|truncatewords:40 }}</p>
+                        <div class="confession-header-row">
+                            <div class="confession-meta">
+                                <span class="confession-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-3 h-3" data-source-location="components/news/NewsCard:40:12" data-dynamic-content="false">
+                                        <path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path>
+                                    </svg>
+                                    {{ item.created_at|date:"M d, Y H:i" }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="confession-content">
+                            <h3>{{ item.title }}</h3>
+                            <p class="confession-text">{{ item.body|truncatewords:40 }}</p>
+                        </div>
                         <div class="confession-footer">
-                            <a href="{% url 'news_detail' item.pk %}" class="confession-link">9ra ktar</a>
-                            {% if user.is_staff %}
-                            <form method="post" action="{% url 'news_delete' pk=item.pk %}" style="display:inline; margin-left:10px;" onsubmit="return confirm('Delete this news post?');">
+                            <div class="confession-footer-left">
+                                <form method="post" action="{% url 'add_vote' %}" onsubmit="event.stopPropagation();">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-small">Delete</button>
-                            </form>
-                            {% endif %}
-                            <span class="confession-date">{{ item.created_at|date:"F d, Y" }}</span>
+                                    <input type="hidden" name="model" value="news">
+                                    <input type="hidden" name="object_id" value="{{ item.pk }}">
+                                    <button type="submit" class="action-icon like-btn {% if item.user_liked %}liked{% endif %}" aria-pressed="{% if item.user_liked %}true{% else %}false{% endif %}">
+                                        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="action-count">{{ item.vote_total|default:0 }}</span>
+                                    </button>
+                                </form>
+                                <a href="{% url 'news_detail' item.pk %}#comments" class="action-icon reply-btn" onclick="event.stopPropagation();">
+                                    <span class="icon">💬</span>
+                                    <span class="action-count">{{ item.comments.count }}</span>
+                                </a>
+                            </div>
+                            <div class="confession-footer-right">
+                                {% if user.is_staff %}
+                                    <a href="{% url 'news_delete' item.pk %}" class="btn btn-sm btn-danger" onclick="event.stopPropagation();">Msa7</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            {% if news_list.paginator.num_pages > 1 %}
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+                <nav class="pagination">
+                    {% if news_list.has_previous %}
+                        <a href="?page=1&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first" title="First Page"></a>
+                        <a href="?page={{ news_list.previous_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                    {% else %}
+                        <span class="page-link disabled"></span>
+                        <span class="page-link disabled"> Previous</span>
+                    {% endif %}
+                    
+                    <span class="page-info">
+                        Page {{ news_list.number }} of {{ paginator.num_pages }}
+                    </span>
+                        
+                    {% if news_list.has_next %}
+                        <a href="?page={{ news_list.next_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                        <a href="?page={{ paginator.num_pages }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last" title="Last Page"></a>
+                    {% else %}
+                        <span class="page-link disabled">Next </span>
+                        <span class="page-link disabled"></span>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
         {% else %}
             <div class="empty-state">
                 <p>Makaynch akhbar.</p>
             </div>
         {% endif %}
         {% if user.is_staff %}
-            <a href="{% url 'news_create' %}" class="btn btn-admin" style="margin-top:20px;">Create News</a>
+            <a href="{% url 'news_create' %}" class="btn btn-admin">Create News</a>
         {% endif %}
     </div>
 </div>

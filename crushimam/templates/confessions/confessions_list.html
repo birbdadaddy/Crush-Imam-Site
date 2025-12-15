@@ -10,7 +10,7 @@
                 <a href="{% url 'pending_confessions' %}" class="btn btn-admin">Manage Requests</a>
             {% endif %}
             {% if user.is_authenticated %}
-            <a href="{% url 'confession_request' %}" class="btn btn-primary">Partagi l3tiraf dyalk</a>
+            <button id="open-confession-modal" class="btn btn-primary">Partagi l3tiraf dyalk</button>
             <a href="{% url 'my_confession_requests' %}" class="btn btn-secondary">L3tirafat dyali</a>
             {% else %}
                 <p class="login-prompt"><a href="/accounts/login">Login</a> bach tpartagi l3tiraf dyalk</p>
@@ -39,7 +39,7 @@
         {% if confessions %}
             <div class="confessions-list">
                 {% for confession in confessions %}
-                    <div class="confession-item">
+                    <div class="confession-item" role="link" tabindex="0" onclick="window.location.href='{% url 'confession_detail' confession.pk %}';" onkeypress="if(event.key==='Enter'){window.location.href='{% url 'confession_detail' confession.pk %}';}">
                         <div class="confession-header-row">
                             <div class="confession-meta">
                                 {% if not confession.anonymous and confession.posted_by %}
@@ -51,12 +51,13 @@
                                 {% else %}
                                     <span class="confession-anonymous">Majhol</span>
                                 {% endif %}
-                                <span class="confession-date">{{ confession.posted_at|date:"M d, Y H:i" }}</span>
+                                <span class="confession-date">
+                                    <i class="fa-regular fa-calendar"></i>
+                                    {{ confession.posted_at|date:"M d, Y H:i" }}
+                                </span>
                             </div>
-                            <div class="confession-actions-header">
-                                {% if user.is_staff or confession.posted_by == user %}
-                                    <a href="{% url 'delete_confession' confession.pk %}" class="btn btn-sm btn-danger">Msa7</a>
-                                {% endif %}
+                            <div class="confession-actions-header-right">
+                                <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
                             </div>
                         </div>
                         
@@ -65,13 +66,33 @@
                         </div>
                         
                         <div class="confession-footer">
-                            <a href="{% url 'confession_detail' confession.pk %}" class="confession-link">9ra ktar </a>
-                            <span class="confession-anonymous"> ID: #{{ confession.id }}</span>
+                            <div class="confession-footer-left">
+                                <form method="post" action="{% url 'add_vote' %}" onsubmit="event.stopPropagation();">
+                                {% csrf_token %}
+                                    <input type="hidden" name="model" value="confession">
+                                    <input type="hidden" name="object_id" value="{{ confession.pk }}">
+                                    <button type="submit" class="action-icon like-btn {% if confession.user_liked %}liked{% endif %}" aria-pressed="{% if confession.user_liked %}true{% else %}false{% endif %}">
+                                        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="action-count">{{ confession.vote_total|default:0 }}</span>
+                                    </button>
+                                </form>
+                                <a href="{% url 'confession_detail' confession.pk %}#comments" class="action-icon reply-btn" onclick="event.stopPropagation();">
+                                    <span class="icon">💬</span>
+                                    <span class="action-count">{{ confession.comments.count }}</span>
+                                </a>
+                            </div>
+                            <div class="confession-footer-right">
+                                {% if user.is_staff or confession.posted_by == user %}
+                                    <a href="{% url 'delete_confession' confession.pk %}" class="btn btn-sm btn-danger" onclick="event.stopPropagation();">Msa7</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
-            
+            {% if confessions.paginator.num_pages > 1 %}
             <!-- Pagination -->
             <div class="pagination-wrapper">
                 <nav class="pagination">
@@ -96,6 +117,7 @@
                     {% endif %}
                 </nav>
             </div>
+            {% endif %}
         {% else %}
             <div class="empty-state">
                 <p>Ma kayn 7ta 3tiraf. Kon awl wa7d!</p>
@@ -103,4 +125,90 @@
         {% endif %}
     </div>
 </div>
+
+
+{% endblock %}
+{% block extra_scripts %}
+{% if user.is_authenticated %}
+<!-- Use SweetAlert2 for confession request modal -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+(function(){
+    var openBtn = document.getElementById('open-confession-modal');
+    if(!openBtn) return;
+    openBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        Swal.fire({
+            title: 'Submit Your Confession',
+            html: `
+                <form id="swal-confession-form" method="post" action="{% url 'confession_request' %}">
+                    {% csrf_token %}
+                    {% if request_form %}
+                        <div class="form-group">
+                            <label for="id_text">{{ request_form.text.label }}</label>
+                            {{ request_form.text }}
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label>
+                                {{ request_form.anonymous }}
+                                {{ request_form.anonymous.label }}
+                            </label>
+                        </div>
+                    {% else %}
+                        <textarea name="text" rows="4" class="swal-textarea" placeholder="ktb l3tiraf dyalk..." required></textarea>
+                        <div class="form-group checkbox-group"><label><input type="checkbox" name="anonymous"> Anonymous</label></div>
+                    {% endif %}
+                </form>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Sift l3tiraf',
+            cancelButtonText: 'Rojo3',
+            focusConfirm: false,
+            showLoaderOnConfirm: true,
+            preConfirm: () => {
+                const form = Swal.getPopup().querySelector('#swal-confession-form');
+                if(!form) return Promise.reject('Form not found');
+                const fd = new FormData(form);
+                return fetch(form.action, {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin',
+                    headers: {'X-Requested-With': 'XMLHttpRequest'}
+                }).then(res => {
+                    // Expect JSON response for AJAX
+                    return res.json().then(data => ({status: res.status, data: data}));
+                }).then(obj => {
+                    if(obj.status >= 200 && obj.status < 300 && obj.data && obj.data.ok){
+                        return obj.data;
+                    }
+                    console.log('Error response', obj);
+                    // validation errors or other failure
+                    const err = obj.data || {errors: {'__all__': ['Submission failed']}};
+                    let msgs = [];
+                    if(err.errors){
+                        for(const k in err.errors){ msgs.push(err.errors[k].join(' ')); }
+                    } else if(err.detail){ msgs.push(err.detail); }
+                    const message = msgs.join('\n') || 'Submission failed';
+                    Swal.showValidationMessage(message);
+                    return Promise.reject(message);
+                }).catch(e => {
+                    if(typeof e === 'string') throw e;
+                    Swal.showValidationMessage('Network or server error');
+                    return Promise.reject(e);
+                });
+            },
+            didOpen: () => {
+                const popup = Swal.getPopup();
+                const ta = popup.querySelector('textarea[name="text"]');
+                if(ta) ta.style.width = '100%';
+            }
+        }).then((result) => {
+            if(result && result.isConfirmed){
+                Swal.fire('Submitted', 'Chokran 3la l3tiraf dyalk - Ladmins ghadi ychofoh o ypostiwah.', 'success');
+            }
+        });
+    });
+})();
+</script>
+{% endif %}
 {% endblock %}

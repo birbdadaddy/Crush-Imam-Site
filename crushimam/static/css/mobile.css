@@ -35,7 +35,7 @@
 /* Desktop Navigation - Always Visible */
 
 .nav-menu {
-    display: flex !important;
+    display: none !important;
     max-height: none !important;
     position: static !important;
     background: transparent !important;
@@ -126,7 +126,7 @@
         height: 100vh;
         max-width: 420px;
         background: linear-gradient(180deg, #d62828 0%, #b71f1f 100%) !important;
-        display: flex !important;
+        display: none !important;
         flex-direction: column !important;
         gap: 0 !important;
         transform: translateX(100%);
@@ -140,6 +140,7 @@
         overflow-y: auto;
     }
     .nav-menu.active {
+        display: flex !important;
         transform: translateX(0);
         pointer-events: auto;
         width: 50% !important;

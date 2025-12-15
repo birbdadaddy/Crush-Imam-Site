@@ -3,9 +3,8 @@
 {% block content %}
 <div class="container">
     <div class="confession-detail-wrapper">
-        <a href="{% url 'confessions_list' %}" class="btn btn-secondary btn-back">← Rojo3</a>
+        <a href="{% url 'confessions_list' %}" class="btn btn-back">← Rojo3</a>
         
-        <div class="confession-detail-card">
             <div class="confession-item">
                 {% if not confession.anonymous and confession.posted_by %}
                     <div class="author-info">
@@ -28,82 +27,31 @@
                     </div>
                 {% endif %}
                 <div class="confession-meta-detail">
-                    <span class="confession-date">{{ confession.posted_at|date:"F d, Y \a\t H:i" }}</span>
+                    <span class="confession-date"><i class="fa-regular fa-calendar"></i> {{ confession.posted_at|date:"F d, Y \a\t H:i" }}</span>
                 </div>
                 <div class="confession-content">
                     <p class="confession-full-text">{{ confession.text }}</p>
                 </div>
-            </div>
-            
-            <div class="confession-detail-content">
-                <div class="votes" style="margin-top:1rem">
+                <div class="votes">
                     <form method="post" action="{% url 'add_vote' %}" class="vote-form like-control">
                         {% csrf_token %}
                         <input type="hidden" name="model" value="confession">
                         <input type="hidden" name="object_id" value="{{ confession.pk }}">
-                        <button type="submit" class="like-btn {% if user.is_authenticated and user_liked %}liked{% endif %}" title="Like">❤</button>
-                        <span class="vote-count">{{ confession.vote_total|default:0 }}</span>
+                        <button type="submit" class="action-icon like-btn {% if user.is_authenticated and user_liked %}liked{% endif %}" aria-pressed="{% if confession.user_liked %}true{% else %}false{% endif %}">
+                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="action-count">{{ confession.vote_total|default:0 }}</span>
+                        </button>
                     </form>
                 </div>
+            </div>
+        <div class="confession-detail-card">
+            
+            <div class="confession-detail-content">
 
-                <div class="comments" style="margin-top:1.5rem">
+                <div class="comments">
                     <h4>Comments</h4>
-                    <div class="comment-list">
-                        {% for c in no_reply_comments %}
-                            <div class="comment-item">
-                                <div class="comment-meta">{% if c.user %}{{ c.user.username }}{% else %}Majhol{% endif %} • {{ c.created_at|date:'Y-m-d H:i' }}</div> 
-                                <div class="comment-body">{{ c.body }}</div>
-                                <div class="comment-actions" style="margin-top:.5rem; display:flex; gap:8px; align-items:center">
-                                    <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="model" value="comment">
-                                        <input type="hidden" name="object_id" value="{{ c.pk }}">
-                                        <button type="submit" class="like-btn small {% if user.is_authenticated and c.pk in liked_comment_ids %}liked{% endif %}">❤</button>
-                                        <span class="vote-count">{{ c.like_count }}</span>
-                                    </form>
-                                    {% if user.is_authenticated %}
-                                    <form method="post" action="{% url 'add_comment' %}" class="reply-form" style="display:inline-block;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="model" value="confession">
-                                        <input type="hidden" name="object_id" value="{{ confession.pk }}">
-                                        <input type="hidden" name="parent_id" value="{{ c.pk }}">
-                                        <input type="text" name="body" placeholder="ktb reply..." required style="padding:6px 8px; border-radius:6px; border:1px solid #ddd;">
-                                        <button type="submit" class="btn btn-small" style="margin-left:6px">Reply</button>
-                                    </form>
-                                    {% endif %}
-                                    {% if c.user == user or user.is_staff %}
-                                        <a href="{% url "delete_comment" c.pk %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn btn-danger btn-small">Msa7</a>
-                                    {% endif %}
-                                </div>
-
-                                {% if c.replies.all %}
-                                    <div class="replies" style="margin-top:.75rem; margin-left:12px">
-                                        {% for r in c.replies.all %}
-                                            <div class="comment-item" style="background:#fff; padding:8px;">
-                                                <div class="comment-meta">{% if r.user %}{{ r.user.username }}{% else %}Majhol{% endif %} • {{ r.created_at|date:'Y-m-d H:i' }}</div>
-                                                <div class="comment-body">{{ r.body }}</div>
-                                                <div class="comment-actions" style="margin-top:.5rem; display:flex; gap:8px; align-items:center">
-                                                                    <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="model" value="comment">
-                                                        <input type="hidden" name="object_id" value="{{ r.pk }}">
-                                                                        <button type="submit" class="like-btn small {% if user.is_authenticated and r.pk in liked_comment_ids %}liked{% endif %}">❤</button>
-                                                                        <span class="vote-count">{{ r.like_count }}</span>
-                                                    </form>
-                                                    {% if r.user == user or user.is_staff %}
-                                                        <a href="{% url "delete_comment" r.pk %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn btn-danger btn-small">Msa7</a>
-                                                    {% endif %}
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% empty %}
-                            <p class="muted">Ma kayn 7ta comment.</p>
-                        {% endfor %}
-                    </div>
-
                     {% if user.is_authenticated %}
                     <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
                         {% csrf_token %}
@@ -115,14 +63,90 @@
                     {% else %}
                         <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
                     {% endif %}
+                    <div class="comment-list">
+                        {% for c in no_reply_comments %}
+                            <div class="comment-item">
+                                <div class="comment-meta">
+                                    {% if c.user %}{{ c.user.username }}{% else %}Majhol{% endif %} • {{ c.created_at|date:'Y-m-d H:i' }}
+                                    {% if c.user == user or user.is_staff %}
+                                        <a href="{% url "delete_comment" c.pk %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn comment-delete"><i class="fa-solid fa-trash-can"></i></a>
+                                    {% endif %}
+                                </div> 
+                                <div class="comment-body">{{ c.body }}
+
+                                </div>
+                                <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="model" value="comment">
+                                    <input type="hidden" name="object_id" value="{{ c.pk }}">
+                                    <button type="submit" class="action-icon like-btn {% if user.is_authenticated and c.pk in liked_comment_ids %}liked{% endif %}" aria-pressed="{% if confession.user_liked %}true{% else %}false{% endif %}">
+                                        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="action-count">{{ c.like_count|default:0 }}</span>
+                                    </button>
+                                </form>
+                                <div class="comment-actions">
+                                    {% if user.is_authenticated %}
+                                    <form method="post" action="{% url 'add_comment' %}" class="reply-form" style="display:inline-block;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="model" value="confession">
+                                        <input type="hidden" name="object_id" value="{{ confession.pk }}">
+                                        <input type="hidden" name="parent_id" value="{{ c.pk }}">
+                                        <input type="text" name="body" placeholder="ktb reply..." required style="padding:6px 8px; border-radius:6px; border:1px solid #ddd;">
+                                        <button type="submit" class="btn btn-small">Reply</button>
+                                    </form>
+                                    {% endif %}
+                                    
+                                </div>
+
+                                {% if c.replies.all %}
+                                    <div class="replies" style="margin-top:.75rem; margin-left:12px">
+                                        {% for r in c.replies.all %}
+                                            <div class="comment-item" style="background:#fff; padding:8px;">
+                                                <div class="comment-meta">
+                                                    {% if r.user %}{{ r.user.username }}{% else %}Majhol{% endif %} • {{ r.created_at|date:'Y-m-d H:i' }}
+                                                    {% if r.user == user or user.is_staff %}
+                                                        <a href="{% url "delete_comment" r.pk %}" onclick="return confirm('Are you sure you want to delete this comment?');" class="btn comment-delete"><i class="fa-solid fa-trash-can"></i></a>
+                                                    {% endif %}
+                                                </div>
+                                                <div class="comment-body">{{ r.body }}</div>
+                                                <div class="comment-actions">
+                                                    <form method="post" action="{% url 'add_vote' %}" class="comment-like-form">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="model" value="comment">
+                                                        <input type="hidden" name="object_id" value="{{ r.pk }}">
+                                                        <button type="submit" class="action-icon like-btn {% if user.is_authenticated and r.pk in liked_comment_ids %}liked{% endif %}" aria-pressed="{% if r.user_liked %}true{% else %}false{% endif %}">
+                                                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                                <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                            <span class="action-count">{{ r.like_count|default:0 }}</span>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% empty %}
+                            <p class="muted">Ma kayn 7ta comment.</p>
+                        {% endfor %}
+                    </div>
+
+                    
                 </div>
             </div>
             
-            {% if user.is_staff or confession.posted_by == user %}
-            <div class="confession-detail-footer">
-                    <a href="{% url 'delete_confession' confession.pk %}" class="btn btn-danger">Delete Confession</a>
+            {% if user.is_staff or confession.author == user %}
+                <div class="confession-detail-footer">
+                    <form method="post" action="{% url 'delete_confession' pk=confession.pk %}" onsubmit="return confirm('Are you sure you want to delete this hall post?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </div>
                 {% endif %}
+        </div>
         </div>
     </div>
 </div>

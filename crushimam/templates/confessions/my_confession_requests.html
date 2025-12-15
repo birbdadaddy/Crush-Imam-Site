@@ -5,13 +5,21 @@
     <div class="account-wrapper">
         <h1>My Confession Requests</h1>
         
+        <!-- Search Bar -->
+        <div class="search-container">
+            <form method="get" class="search-bar">
+                <input type="text" name="q" class="search-input" placeholder="Ftch wla ktb #id..." value="{{ search_query }}">
+                <button type="submit" class="search-btn">Ftch</button>
+            </form>
+            <p class="search-tip">💡 Nasi7a: Sta3ml <strong>#123</strong> bach tftch bsti3mal l ID</p>
+        </div>
+        
         {% if requests %}
             <div class="requests-list">
                 {% for request in requests %}
                     <div class="account-card">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
                             <div>
-                                <h3>{{ request.text|truncatewords:10 }}</h3>
                                 <span class="status-badge status-{{ request.status }}">{{ request.get_status_display|upper }}</span>
                             </div>
                             {% if request.status == 'pending' %}
@@ -21,15 +29,15 @@
                         
                         <p>{{ request.text }}</p>
                         
-                        {% if request.anonymous %}
-                            <p><em>Had post majhol</em></p>
-                        {% else %}
-                            <p><em>Had post b ismk</em></p>
-                        {% endif %}
                         
-                        <span class="confession-anonymous"> ID: #{{ request.id }}</span>
                         <div class="account-meta">
+                            {% if request.anonymous %}
+                                <p><em>Had post majhol</em></p>
+                            {% else %}
+                                <p><em>Had post b ismk</em></p>
+                            {% endif %}
                             F: {{ request.submitted_at|date:"F d, Y \a\t H:i" }}
+                            <p>ID: #{{ request.id }}</p>
                         </div>
                         
                         {% if request.status == 'rejected' and request.rejection_reason %}
@@ -46,6 +54,30 @@
                         {% endif %}
                     </div>
                 {% endfor %}
+            </div>
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+                <nav class="pagination">
+                    {% if requests.has_previous %}
+                        <a href="?page=1" class="page-link first" title="First Page"></a>
+                        <a href="?page={{ requests.previous_page_number }}" class="page-link">Previous</a>
+                    {% else %}
+                        <span class="page-link disabled"></span>
+                        <span class="page-link disabled">Previous</span>
+                    {% endif %}
+                    
+                    <span class="page-info">
+                        Page {{ requests.number }} of {{ paginator.num_pages }}
+                    </span>
+                    
+                    {% if requests.has_next %}
+                        <a href="?page={{ requests.next_page_number }}" class="page-link">Next</a>
+                        <a href="?page={{ paginator.num_pages }}" class="page-link last" title="Last Page"></a>
+                    {% else %}
+                        <span class="page-link disabled">Next</span>
+                        <span class="page-link disabled"></span>
+                    {% endif %}
+                </nav>
             </div>
         {% else %}
             <div class="empty-state">

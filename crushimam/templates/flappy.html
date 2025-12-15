@@ -2,21 +2,9 @@
 
 {% block title %}Flappy - Crush Imam{% endblock %}
 
+{% block body_class %}flappy-body{% endblock %}
 {% block content %}
-<style>
-  .flappy-container{max-width:800px;margin:0 auto;padding:1rem}
-  canvas{width:100%;height:auto;display:block;background:#70c5ce;border-radius:8px}
-  .hud{display:flex;justify-content:space-between;align-items:center;margin-top:.5rem}
-  .score{font-size:1.25rem;font-weight:700}
-  .btn-play{padding:.5rem 1rem;border-radius:6px}
-  .leaderboard{margin-top:1rem}
-  .leaderboard table{width:100%;border-collapse:collapse}
-  .leaderboard th,.leaderboard td{padding:.4rem;border-bottom:1px solid #eee;text-align:left}
-  @media (max-width:600px){
-    .score{font-size:1rem}
-    .btn-play{padding:.4rem .8rem}
-  }
-</style>
+
 
 <div class="flappy-container">
   <h2>Flappy Bird</h2>
@@ -34,7 +22,7 @@
   </div>
 
   <div class="leaderboard">
-    <h3>Leaderboard</h3>
+    <h3><i class="fa-solid fa-trophy text-yellow"></i> Leaderboard</h3>
     <table id="leaderboard">
       <thead><tr><th>#</th><th>Smiya</th><th>Score</th><th>F</th></tr></thead>
       <tbody>
@@ -55,7 +43,7 @@
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 // base logical size (kept for game math). We'll scale for high-DPI displays.
-const baseW = 480, baseH = 640;
+const baseW = 480, baseH = 580;
 function setupCanvas(){
   const ratio = window.devicePixelRatio || 1;
   canvas.width = baseW * ratio;
@@ -72,13 +60,13 @@ let H = baseH;
 let bird = {x:80,y:H/2,vy:0,rad:14};
 // adjust physics for desktop vs mobile (slower on desktop)
 const isDesktop = window.innerWidth >= 900;
-let gravity = isDesktop ? 0.2 : 0.55; // slower gravity on desktop
-let flap = isDesktop ? -7 : -10; // gentler flap on desktop
-let pipeSpeed = isDesktop ? 1.8 : 2.6; // slower pipe speed on desktop
+let gravity = 0.2; // slower gravity on desktop
+let flap = -7; // gentler flap on desktop
+let pipeSpeed = 1.8; // slower pipe speed on desktop
 let pipeWidth = 60;
 let pipes = [];
-let gap = isDesktop ? 200 : 150;
-let spawnInterval = isDesktop ? 110 : 90; // frames between pipes
+let gap = 200;
+let spawnInterval = 110 ; // frames between pipes
 let frame = 0;
 let score = 0;
 let playing = false;
@@ -153,7 +141,7 @@ function draw(){
 function loop(){ update(); draw(); if(playing) requestAnimationFrame(loop); }
 
 function startGame(){
-  if(!playing){ reset(); requestAnimationFrame(loop); }
+  if(!playing){reset(); requestAnimationFrame(loop); }
 }
 
 function flapBird(){ startGame(); bird.vy = flap; }

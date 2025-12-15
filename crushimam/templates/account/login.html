@@ -4,11 +4,11 @@
 {% block head_title %}{% trans "Sign In" %}{% endblock %}
 
 {% block content %}
-<div class="container allauth-login">
-    <div class="account-form">
+<div class="container allauth-signup">
+    <div class="allauth-signup-form">
         <h1>{% trans "Sign In" %}</h1>
         <div class="">
-            <form method="POST" action="{% url 'account_login' %}">
+            <form class="account-form" method="POST" action="{% url 'account_login' %}">
                 {% csrf_token %}
                 {{ form.as_p }}
                 
@@ -19,7 +19,7 @@
                 <button type="submit">{% trans "Sign In" %}</button>
             </form>
             
-            <p>Don't have an account? <a href="{{ signup_url }}">Sign up</a></p>
+            <p class="account-form">Don't have an account? <a href="{{ signup_url }}">Sign up</a></p>
             
         </div>
     </div>

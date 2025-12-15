@@ -1,32 +1,203 @@
 {% extends "crushimam/base.html" %}
 {% block content %}
-    <header class="site-header">
-        <h1>Crush Imam</h1>
-        <p class="tagline">L9a li ynasbk f madrastk!</p>
-    </header>
+    <div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30">
+  <!-- Hero Section -->
+  <div class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+    <div class="max-w-6xl mx-auto px-4 py-16 sm:py-24 relative">
+      <div class="text-center">
+        <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-indigo-200 rounded-full px-4 py-2 mb-6">
+          <i class="fas fa-wand-magic-sparkles w-4 h-4 text-indigo-500"></i>
+          <span class="text-sm font-medium text-indigo-600">Mrhba bik f Crush Imam</span>
+        </div>
+        
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-6">
+          <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Share Your Story
+          </span>
+        </h1>
+        
+        <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+          Platform anonyme bach tpartagi l3tirafat dyalk, t9ra news, w tl3ab games m3a community dyalna 💜
+        </p>
 
-    <section class="hero">
-        <h2>Ktachf mdrastk</h2>
-        <p>Connecta m3a tlamed o tlmidat mn madrassatk o 3raf akhbar mdrastk.</p>
-        <button id="cta-btn" onclick="location.href='/accounts/login'">Bda Daba</button>
-    </section>
+        <div class="hero-buttons flex flex-col sm:flex-row items-center justify-center gap-4">
+          <a href="{% url 'confessions_list' %}" class="btn bg-white text-indigo-600 hover:bg-slate-50 shadow-xl text-lg px-8 py-6 rounded-xl">
+            <i class="fas fa-comments w-5 h-5 mr-2"></i>
+            Shuf l3tirafat
+          </a>
+          {% if not user.is_authenticated %}
+          <!-- This part would be dynamically rendered based on user authentication -->
+          <a href="{% url 'account_signup' %}" class="btn bg-white text-indigo-600 hover:bg-slate-50 shadow-xl text-lg px-8 py-6 rounded-xl">
+            <i class="fas fa-user-plus w-5 h-5 mr-2"></i>
+            Bda db
+          </a>
+          {% endif %}
+        </div>
+      </div>
 
-    <section class="features">
-        <div class="feature">
-            <h3>Profiles Dyal Tlamid</h3>
-            <p>Kashf profiles dyal tlamid o tlamidat b wahed tari9a bssita w sari3a.</p>
+      <!-- Stats -->
+      <div class="stats-grid mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        <div class="stat-card">
+          <div class="pt-6 text-center">
+            <!-- Heart icon -->
+             <i class="fas fa-heart stat-icon w-8 h-8 text-rose-500 mx-auto mb-2"></i>
+            {% comment %} <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="stat-icon w-8 h-8 text-rose-500 mx-auto mb-2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg> {% endcomment %}
+            <div class="stat-value text-3xl font-bold text-slate-800">{{confessions_count}}</div> <!-- Replace with dynamic stat -->
+            <div class="text-sm text-slate-500">Confessions</div>
+          </div>
         </div>
-        <div class="feature">
-            <h3>Chat sari3</h3>
-            <p>Khod instagram ta3 li khsk o dkhol thdar m3ah.</p>
+        <div class="stat-card">
+          <div class="pt-6 text-center">
+            <!-- Newspaper icon -->
+            <i class="fas fa-newspaper stat-icon w-8 h-8 text-blue-500 mx-auto mb-2"></i>
+            <div class="stat-value text-3xl font-bold text-slate-800">{{news_count}}</div> <!-- Replace with dynamic stat -->
+            <div class="text-sm text-slate-500">News</div>
+          </div>
         </div>
-        <div class="feature">
-            <h3>Sm7o liya</h3>
-            <p>Sm7o liya a drari ila kayna chi mochkil f design wla chi 7aja, ma khalsonichi mzyan. Lmohim ila kayna chi 7aja passiha f instagram.</p>
+        <div class="stat-card">
+          <div class="pt-6 text-center">
+            <!-- Users icon -->
+            <i class="fas fa-users stat-icon w-8 h-8 text-purple-500 mx-auto mb-2"></i>
+            <div class="stat-value text-3xl font-bold text-slate-800">{{user_count}}+</div>
+            <div class="text-sm text-slate-500">Community</div>
+          </div>
         </div>
-        <div class="feature">
-            <h3>Ma 3raftch chno nzid hna</h3>
-            <p>ch7ayli o ana kankhamem ma jbartch chno nktb hna.</p>
+        <div class="stat-card">
+          <div class="pt-6 text-center">
+            <!-- TrendingUp icon -->
+            <i class="fas fa-chart-line stat-icon w-8 h-8 text-amber-500 mx-auto mb-2"></i>
+            <div class="stat-value text-3xl font-bold text-slate-800">24/7</div>
+            <div class="text-sm text-slate-500">Active</div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="features-section max-w-6xl mx-auto px-4 py-16">
+    <div class="features-header text-center mb-12">
+      <h2 class="features-title text-3xl sm:text-4xl font-bold text-slate-800 mb-4">
+        Ash kayn f Platform
+      </h2>
+      <p class="features-subtitle text-slate-600 max-w-2xl mx-auto">
+        Explore kol features li 3andna w kon part mn community dyalna
+      </p>
+    </div>
+
+    <div class="features-grid md:grid-cols-2 gap-6">
+      <!-- Feature Card 1 -->
+      <a href="{% url 'confessions_list' %}">
+        <div class="feature-card group h-full">
+          <div class="p-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center mb-4">
+              <!-- MessageSquare icon -->
+              <i class="fas fa-comments feature-icon w-6 h-5 text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">
+              Confessions
+            </h3>
+            <p class="text-slate-600 mb-4">
+              3tirafat ghamida mn community dyalna
+            </p>
+            <div class="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+              Chof l3tirafat
+              <!-- ArrowRight icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </a>
+      <!-- Feature Card 2 -->
+      <a href="{% url 'news_list' %}">
+        <div class="feature-card group h-full">
+          <div class="p-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-4">
+              <!-- Newspaper icon -->
+              <i class="fas fa-newspaper feature-icon w-6 h-5 text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">
+              News
+            </h3>
+            <p class="text-slate-600 mb-4">
+              Akhbar d mdrasa
+            </p>
+            <div class="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+              Chof News
+              <!-- ArrowRight icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </a>
+      <!-- Feature Card 3 -->
+      <a href="{% url "hall_list" category='fame' %}">
+        <div class="feature-card group h-full">
+          <div class="p-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4">
+              <!-- Crown icon -->
+              <i class="fas fa-crown feature-icon w-6 h-5 text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">
+              Hall of Fame
+            </h3>
+            <p class="text-slate-600 mb-4">
+              A7sn nas f mdarsa
+            </p>
+            <div class="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+              Chof Hall
+              <!-- ArrowRight icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </a>
+      <!-- Feature Card 4 -->
+      <a href="{% url 'flappy' %}">
+        <div class="feature-card group h-full">
+          <div class="p-8">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
+              <!-- Gamepad2 icon -->
+              <i class="fas fa-gamepad feature-icon w-6 h-5 text-white"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">
+              Mini Game
+            </h3>
+            <p class="text-slate-600 mb-4">
+              L3b w tla3 f leaderboard
+            </p>
+            <div class="flex items-center text-indigo-600 font-semibold group-hover:gap-3 gap-2 transition-all">
+              L3ab daba
+              <!-- ArrowRight icon -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="cta-section max-w-4xl mx-auto px-4 py-16">
+    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 border-0 shadow-2xl overflow-hidden relative rounded-2xl">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCU2MCiPLz48L3N2Zz4=')] opacity-30"></div>
+      <div class="cta-card p-12 text-center relative z-10">
+        <!-- Sparkles icon -->
+        <i class="fas fa-wand-magic-sparkles cta-icon"></i>
+        <h2 class="cta-title text-3xl sm:text-4xl font-bold text-white mb-4">
+          Ready bach tbda?
+        </h2>
+        <p class="cta-description text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+          Partagi l3tiraf dyalk anonymously w kon part mn biggest confession community
+        </p>
+        <a href="{% url 'confession_request' %}" class="btn bg-white text-indigo-600 hover:bg-slate-50 shadow-xl text-lg px-8 py-6 rounded-xl">
+          <!-- MessageSquare icon -->
+           <i class="fas fa-comments w-5 h-5 mr-2"></i>
+          Start Confessing
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

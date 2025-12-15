@@ -1,38 +1,100 @@
 {% extends 'crushimam/base.html' %}
 
+{% block body_class %}hall-body{% endblock %}
 {% block content %}
 <div class="container">
     <div class="confessions-wrapper">
-        <h1>{% if category == 'fame' %}Hall of Fame (9a3a d machahir){% else %}Hall of Shame (9a3a d lmasayib){% endif %}</h1>
+        <div class="confessions-header">
+            <h2 class="header-fame">Hall of Fame & Shame</h2>
+        </div>
+        <div class="category-toggle">
+            <a href="{% url 'hall_list' category='fame' %}" class="btn fame {% if category == 'fame' %}active{% endif %}"><i class="fa-solid fa-crown"></i> Hall of Fame</a>
+            <a href="{% url 'hall_list' category='shame' %}" class="btn shame {% if category == 'shame' %}active{% endif %}"><i class="fa-solid fa-skull"></i> Hall of Shame</a>
+        </div>
         {% if posts %}
             <div class="confessions-list">
                 {% for p in posts %}
-                    <div class="confession-item">
-                        <h3>{{ p.title }}</h3>
+                    <div class="confession-item" role="link" onclick="window.location.href='{% url 'hall_detail' p.pk %}';">
                         {% if p.image %}
-                            <img src="{{ p.image.url }}" alt="{{ p.title }}" style="max-width:100%; height:auto; margin:10px 0; border-radius:6px;">
+                        <div class="post-image-wrapper">
+                            <img src="{{ p.image.url }}" alt="{{ p.title }}" class="post-image">
+                        </div>
                         {% endif %}
-                        <p class="confession-text">{{ p.body|truncatewords:40 }}</p>
+                        <div class="confession-header-row">
+                            <div class="confession-meta">
+                                <span class="confession-date">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar w-3 h-3" data-source-location="components/news/NewsCard:40:12" data-dynamic-content="false">
+                                        <path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path>
+                                    </svg>
+                                    {{ p.created_at|date:"M d, Y H:i" }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="confession-content">
+                            <h3>{{ p.title }}</h3>
+                            <p class="confession-text">{{ p.body|truncatewords:40 }}</p>
+                        </div>
                         <div class="confession-footer">
-                            <a href="{% url 'hall_detail' p.pk %}" class="confession-link">9ra ktar</a>
-                            {% if user.is_staff %}
-                            <form method="post" action="{% url 'hall_delete' pk=p.pk %}" style="display:inline; margin-left:10px;" onsubmit="return confirm('Delete this hall post?');">
+                            <div class="confession-footer-left">
+                                <form method="post" action="{% url 'add_vote' %}" onsubmit="event.stopPropagation();">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger btn-small">Mas7</button>
-                            </form>
-                            {% endif %}
-                            <span class="confession-date">{{ p.created_at|date:"F d, Y" }}</span>
+                                    <input type="hidden" name="model" value="hallpost">
+                                    <input type="hidden" name="object_id" value="{{ p.pk }}">
+                                    <button type="submit" class="action-icon like-btn {% if p.user_liked %}liked{% endif %}" aria-pressed="{% if p.user_liked %}true{% else %}false{% endif %}">
+                                        <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        <span class="action-count">{{ p.vote_total|default:0 }}</span>
+                                    </button>
+                                </form>
+                                <a href="{% url 'hall_detail' p.pk %}#comments" class="action-icon reply-btn" onclick="event.stopPropagation();">
+                                    <span class="icon">💬</span>
+                                    <span class="action-count">{{ p.comments.count }}</span>
+                                </a>
+                            </div>
+                            <div class="confession-footer-right">
+                                {% if user.is_staff %}
+                                    <a href="{% url 'hall_delete' p.pk %}" class="btn btn-sm btn-danger" onclick="event.stopPropagation();">Msa7</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 {% endfor %}
             </div>
+            {% if posts.paginator.num_pages > 1 %}
+
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+                <nav class="pagination">
+                    {% if posts.has_previous %}
+                        <a href="?page=1&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link first" title="First Page"></a>
+                        <a href="?page={{ posts.previous_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link"> Previous</a>
+                    {% else %}
+                        <span class="page-link disabled"></span>
+                        <span class="page-link disabled"> Previous</span>
+                    {% endif %}
+                    
+                    <span class="page-info">
+                        Page {{ posts.number }} of {{ paginator.num_pages }}
+                    </span>
+                    
+                    {% if posts.has_next %}
+                        <a href="?page={{ posts.next_page_number }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link">Next </a>
+                        <a href="?page={{ paginator.num_pages }}&filter={{ filter_type }}{% if search_query %}&q={{ search_query }}{% endif %}" class="page-link last" title="Last Page"></a>
+                    {% else %}
+                        <span class="page-link disabled">Next </span>
+                        <span class="page-link disabled"></span>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
         {% else %}
             <div class="empty-state">
                 <p>Ba9i ma kaynch chi post.</p>
             </div>
         {% endif %}
         {% if user.is_staff %}
-            <a href="{% url 'hall_create' category=category %}" class="btn btn-admin" style="margin-top:20px;">Create Post</a>
+            <a href="{% url 'hall_create' category=category %}" class="btn btn-admin">Create Post</a>
         {% endif %}
     </div>
 </div>

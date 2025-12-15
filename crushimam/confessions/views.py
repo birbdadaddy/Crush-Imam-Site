@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.utils import timezone
@@ -49,12 +50,27 @@ def confessions_list(request):
         confessions = paginator.page(1)
     except EmptyPage:
         confessions = paginator.page(paginator.num_pages)
-    
+
+    # Precompute which confessions the current user has liked to avoid template method calls
+    if request.user.is_authenticated:
+        ct = ContentType.objects.get_for_model(Confession)
+        ids_on_page = [c.pk for c in confessions]
+        liked_ids = set(Vote.objects.filter(user=request.user, content_type=ct, object_id__in=ids_on_page).values_list('object_id', flat=True))
+        for c in confessions:
+            c.user_liked = (c.pk in liked_ids)
+    else:
+        for c in confessions:
+            c.user_liked = False
+
+    # Provide an empty confession request form for the modal (only for authenticated users)
+    request_form = ConfessionRequestForm() if request.user.is_authenticated else None
+
     return render(request, 'confessions/confessions_list.html', {
         'confessions': confessions,
         'filter_type': filter_type,
         'paginator': paginator,
         'search_query': search_query,
+        'request_form': request_form,
     })
 
 
@@ -78,28 +94,52 @@ def confession_request(request):
             confession_req = form.save(commit=False)
             confession_req.submitted_by = request.user
             confession_req.save()
-            return redirect('confession_request_success')
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'ok': True})
+        else:
+            # If AJAX, return validation errors as JSON
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                errors = {field: [str(e) for e in errs] for field, errs in form.errors.items()}
+                return JsonResponse({'ok': False, 'errors': errors}, status=400)
     else:
         form = ConfessionRequestForm()
     return render(request, 'confessions/confession_request.html', {'form': form})
 
 
 @login_required
-def confession_request_success(request):
-    """Show success message after submission"""
-    return render(request, 'confessions/confession_request_success.html')
-
-
-@login_required
 def my_confession_requests(request):
     """Show user's own confession requests"""
-    requests = ConfessionRequest.objects.filter(submitted_by=request.user)
-    return render(request, 'confessions/my_confession_requests.html', {'requests': requests})
+    qs = ConfessionRequest.objects.filter(submitted_by=request.user).order_by('-submitted_at')
+    
+    # Search functionality
+    search_query = request.GET.get('q', '').strip()
+    if search_query:
+        # If query starts with #, search by ID
+        if search_query.startswith('#'):
+            try:
+                confession_id = int(search_query[1:])
+                qs = qs.filter(id=confession_id)
+            except ValueError:
+                qs = qs.none()
+        else:
+            # Search by text content
+            qs = qs.filter(text__icontains=search_query)
+
+    paginator = Paginator(qs, 10)
+    page = request.GET.get('page')
+    try:
+        requests = paginator.page(page)
+    except PageNotAnInteger:
+        requests = paginator.page(1)
+    except EmptyPage:
+        requests = paginator.page(paginator.num_pages)
+    
+    return render(request, 'confessions/my_confession_requests.html', {'requests': requests, 'paginator': paginator})
 
 
 @login_required
 def cancel_confession_request(request, pk):
-    """Cancel a pending confession request (user can only cancel their own)"""
+    """Allow user to cancel their pending confession request"""
     confession_req = get_object_or_404(ConfessionRequest, pk=pk, submitted_by=request.user)
     if confession_req.status == 'pending':
         if request.method == 'POST':
@@ -137,7 +177,7 @@ def pending_confessions(request):
             rejected_qs = rejected_qs.filter(text__icontains=search_query)
     
     # Pagination for pending
-    pending_paginator = Paginator(pending_qs, 10)
+    pending_paginator = Paginator(pending_qs, 5)
     pending_page = request.GET.get('pending_page')
     try:
         pending = pending_paginator.page(pending_page)
@@ -145,7 +185,7 @@ def pending_confessions(request):
         pending = pending_paginator.page(1)
     
     # Pagination for approved
-    approved_paginator = Paginator(approved_qs, 10)
+    approved_paginator = Paginator(approved_qs, 5)
     approved_page = request.GET.get('approved_page')
     try:
         approved = approved_paginator.page(approved_page)
@@ -153,7 +193,7 @@ def pending_confessions(request):
         approved = approved_paginator.page(1)
     
     # Pagination for rejected
-    rejected_paginator = Paginator(rejected_qs, 10)
+    rejected_paginator = Paginator(rejected_qs, 5)
     rejected_page = request.GET.get('rejected_page')
     try:
         rejected = rejected_paginator.page(rejected_page)
@@ -248,7 +288,28 @@ def profile_detail(request, id):
 
 def news_list(request):
     qs = News.objects.all()
-    return render(request, 'news_list.html', {'news_list': qs})
+
+    paginator = Paginator(qs, 10)  # 10 news per page
+    page = request.GET.get('page')
+    try:
+        news = paginator.page(page)
+    except PageNotAnInteger:
+        news = paginator.page(1)
+    except EmptyPage:
+        news = paginator.page(paginator.num_pages)
+
+    # Precompute which news the current user has liked to avoid template method calls
+    if request.user.is_authenticated:
+        ct = ContentType.objects.get_for_model(News)
+        ids_on_page = [c.pk for c in news]
+        liked_ids = set(Vote.objects.filter(user=request.user, content_type=ct, object_id__in=ids_on_page).values_list('object_id', flat=True))
+        for c in news:
+            c.user_liked = (c.pk in liked_ids)
+    else:
+        for c in news:
+            c.user_liked = False
+
+    return render(request, 'news_list.html', {'news_list': news})
 
 
 @admin_required
@@ -308,8 +369,30 @@ def hall_create(request, category):
 
 def hall_list(request, category):
     from .models import HallPost
-    qs = HallPost.objects.filter(category=category)
-    return render(request, 'halls/hall_list.html', {'posts': qs, 'category': category})
+    qs = HallPost.objects.filter(category=category).order_by('-created_at')
+
+    # Pagination for hall posts
+    paginator = Paginator(qs, 10)
+    page = request.GET.get('page')
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    # Precompute which posts the current user has liked to avoid template lookups
+    if request.user.is_authenticated:
+        ct = ContentType.objects.get_for_model(HallPost)
+        ids_on_page = [p.pk for p in posts]
+        liked_ids = set(Vote.objects.filter(user=request.user, content_type=ct, object_id__in=ids_on_page).values_list('object_id', flat=True))
+        for p in posts:
+            p.user_liked = (p.pk in liked_ids)
+    else:
+        for p in posts:
+            p.user_liked = False
+
+    return render(request, 'halls/hall_list.html', {'posts': posts, 'category': category})
 
 
 def hall_detail(request, pk):
@@ -401,8 +484,18 @@ def capture_flappy_photo(request):
 def flappy_photos_admin(request):
     """Admin-only view listing captured flappy photos."""
     from .models import FlappyPhoto
-    photos = FlappyPhoto.objects.all()
-    return render(request, 'flappy_photos.html', {'photos': photos})
+    qs = FlappyPhoto.objects.all().order_by('-created_at')
+    
+    paginator = Paginator(qs, 12)  # 12 photos per page
+    page = request.GET.get('page')
+    try:
+        photos = paginator.page(page)
+    except PageNotAnInteger:
+        photos = paginator.page(1)
+    except EmptyPage:
+        photos = paginator.page(paginator.num_pages)
+    
+    return render(request, 'flappy_photos.html', {'photos': photos, 'paginator': paginator})
 
 
 @login_required

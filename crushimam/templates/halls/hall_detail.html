@@ -3,37 +3,38 @@
 {% block content %}
 <div class="container">
     <div class="confession-detail-wrapper">
-        <a href="{% url 'hall_list' category=post.category %}" class="btn btn-secondary btn-back">← Rojo3</a>
-        <div class="confession-detail-card">
-            <div class="confession-item">
-                <div class="author-details">
-                    {% if user.is_staff %}
-                    <div class="confession-meta-detail" style="margin-left:10px;">
-                        <form method="post" action="{% url 'hall_delete' pk=post.pk %}" onsubmit="return confirm('Are you sure you want to delete this hall post?');">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
-                    {% endif %}
-                    <h2>{{ post.title }}</h2>
-                    <p class="confession-date">{{ post.created_at|date:"F d, Y \a\t H:i" }}</p>
-                </div>
+        <a href="{% url 'confessions_list' %}" class="btn btn-back">← Rojo3</a>
+
+        <div class="confession-item">
+            <div class="post-title">
+                <h3>{{ post.title }}</h3>
+            </div>
+            <div class="confession-meta-detail">
+                <span class="confession-date"><i class="fa-regular fa-calendar"></i> {{ post.created_at|date:"F d, Y \a\t H:i" }}</span>
+            </div>
+
                 {% if post.image %}
                     <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width:100%; height:auto; margin-bottom:20px; border-radius:6px;">
                 {% endif %}
+            <div class="confession-content">
+
                 <p class="confession-full-text">{{ post.body|linebreaks }}</p>
             </div>
-            <div class="confession-detail-content">
-                <div class="votes" style="margin-top:1rem">
+                <div class="votes">
                     <form method="post" action="{% url 'add_vote' %}" class="vote-form like-control">
                         {% csrf_token %}
                         <input type="hidden" name="model" value="hallpost">
                         <input type="hidden" name="object_id" value="{{ post.pk }}">
-                        <button type="submit" class="like-btn {% if user.is_authenticated and user_liked %}liked{% endif %}" title="Like">❤</button>
-                        <span class="vote-count">{{ post.vote_total|default:0 }}</span>
+                        <button type="submit" class="action-icon like-btn {% if user.is_authenticated and user_liked %}liked{% endif %}" aria-pressed="{% if user_liked %}true{% else %}false{% endif %}">
+                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="action-count">{{ post.vote_total|default:0 }}</span>
+                        </button>
                     </form>
                 </div>
-
+            </div>
+            <div class="confession-detail-card">
                 <div class="comments" style="margin-top:1.5rem">
                     <h4>Comments</h4>
                     <div class="comment-list">
@@ -46,8 +47,12 @@
                                         {% csrf_token %}
                                         <input type="hidden" name="model" value="comment">
                                         <input type="hidden" name="object_id" value="{{ c.pk }}">
-                                        <button type="submit" class="like-btn small {% if user.is_authenticated and c.pk in liked_comment_ids %}liked{% endif %}">❤</button>
-                                        <span class="vote-count">{{ c.like_count }}</span>
+                                        <button type="submit" class="action-icon like-btn {% if user.is_authenticated and c.pk in liked_comment_ids %}liked{% endif %}" aria-pressed="{% if c.pk in liked_comment_ids %}true{% else %}false{% endif %}">
+                                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                            <span class="action-count">{{ c.like_count|default:0 }}</span>
+                                        </button>
                                     </form>
                                     {% if user.is_authenticated %}
                                     <form method="post" action="{% url 'add_comment' %}" class="reply-form" style="display:inline-block;">
@@ -75,8 +80,12 @@
                                                         {% csrf_token %}
                                                         <input type="hidden" name="model" value="comment">
                                                         <input type="hidden" name="object_id" value="{{ r.pk }}">
-                                                        <button type="submit" class="like-btn small {% if user.is_authenticated and r.pk in liked_comment_ids %}liked{% endif %}">❤</button>
-                                                        <span class="vote-count">{{ r.like_count }}</span>
+                                                        <button type="submit" class="action-icon like-btn {% if user.is_authenticated and r.pk in liked_comment_ids %}liked{% endif %}" aria-pressed="{% if r.pk in liked_comment_ids %}true{% else %}false{% endif %}">
+                                                            <svg class="heart-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                                                <path d="M12 21s-8-5.33-8-10a5 5 0 0 1 8-4 5 5 0 0 1 8 4c0 4.67-8 10-8 10z" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                                                            </svg>
+                                                            <span class="action-count">{{ r.like_count|default:0 }}</span>
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
@@ -101,10 +110,17 @@
                         <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
                     {% endif %}
                 </div>
+                {% if user.is_staff %}
+                <div class="confession-detail-footer">
+                    <form method="post" action="{% url 'hall_delete' pk=post.pk %}" onsubmit="return confirm('Are you sure you want to delete this hall post?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-</div>
     <script>
     (function(){
         document.querySelectorAll('.like-btn').forEach(function(btn){
