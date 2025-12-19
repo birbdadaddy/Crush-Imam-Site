@@ -39,7 +39,7 @@
 
 {% block extra_scripts %}
 <script>
-// Flappy Bird Game - Rewritten & Improved
+// Flappy Bird Game - Rewritten & Improved (with randomized gaps)
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
@@ -64,13 +64,15 @@ resizeCanvas();
 window.addEventListener('resize', resizeCanvas);
 
 // Game constants
-const GRAVITY = 0.4;
+const GRAVITY = 0.35;
 const FLAP_STRENGTH = -8.5;
-const PIPE_SPEED = 2.3;
+const PIPE_SPEED = 2.2;
 const PIPE_WIDTH = 70;
-const PIPE_GAP = 180;
-const PIPE_INTERVAL = 1500; // ms between pipes
+const PIPE_INTERVAL = 1400; // ms between pipes
 const GROUND_HEIGHT = 60;
+const MIN_GAP = 140;      // Minimum gap size
+const MAX_GAP = 220;      // Maximum gap size
+const MIN_PIPE_HEIGHT = 80; // Minimum height for top/bottom pipes
 
 // Game state
 let bird = {
@@ -125,17 +127,26 @@ function endGame() {
   setTimeout(submitScore, 500);
 }
 
-// Spawn a pipe pair
+// Spawn a pipe pair with RANDOMIZED GAP
 function spawnPipe(currentTime) {
   if (currentTime - lastPipeTime < PIPE_INTERVAL) return;
-  const minHeight = 80;
-  const maxHeight = height - GROUND_HEIGHT - PIPE_GAP - minHeight;
-  const topHeight = minHeight + Math.random() * (maxHeight - minHeight);
+
+  // Random gap size
+  const gap = MIN_GAP + Math.random() * (MAX_GAP - MIN_GAP);
+
+  // Available height for pipes (excluding ground and gap)
+  const availableHeight = height - GROUND_HEIGHT - gap;
+
+  // Ensure enough space for min pipe heights
+  if (availableHeight < 2 * MIN_PIPE_HEIGHT) return; // Skip if impossible (rare)
+
+  // Random top pipe height within valid range
+  const topHeight = MIN_PIPE_HEIGHT + Math.random() * (availableHeight - 2 * MIN_PIPE_HEIGHT);
 
   pipes.push({
     x: width,
     topHeight: topHeight,
-    bottomY: topHeight + PIPE_GAP,
+    bottomY: topHeight + gap,
     scored: false
   });
   lastPipeTime = currentTime;

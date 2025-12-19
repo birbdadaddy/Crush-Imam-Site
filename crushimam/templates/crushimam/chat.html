@@ -1,0 +1,81 @@
+{% extends "crushimam/base.html" %} {% load static %} {% block content %}
+
+<div class="container">
+  <header class="chat-header">
+    <h1>Anonymous Chat (Beta)</h1>
+    <div id="status" class="status">Idle</div>
+  </header>
+
+  <div class="chat-container">
+    <div class="video-chat-container">
+        <div class="video-row">
+        <div class="video-box">
+            <label>You</label>
+            <video id="localVideo" autoplay muted playsinline></video>
+            <div class="camera-controls">
+                <button id="muteBtn" title="Mute/unmute" aria-pressed="false"><i class="fa-solid fa-microphone"></i></button>
+                <button id="camBtn" title="Hide/Show camera" aria-pressed="false"><i class="fa-solid fa-video"></i></button>
+            </div>
+        </div>
+        <div class="video-box">
+            <label>Stranger</label>
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="camera-controls">
+                <button id="reportBtn" title="Report stranger" hidden><i class="fa-solid fa-flag"></i></button>
+            </div>
+        </div>
+        </div>
+
+        <div class="controls">
+          <button id="startBtn">Start Chat</button>
+          <button id="stopBtn" style="display:none;">Stop</button>
+          <button id="nextBtn" disabled>Next</button>
+        </div>
+    </div>
+
+    <div class="stranger-chat-container">
+        <div class="stranger-chat-wrapper">
+        <!-- Header -->
+        <div class="stranger-chat-header">
+            <div class="stranger-chat-title-wrapper">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-message-square stranger-chat-title-icon"
+            >
+                <path
+                d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                ></path>
+            </svg>
+            <span class="stranger-chat-title">Chat</span>
+            </div>
+        </div>
+
+        <!-- Messages Area -->
+        <div class="stranger-chat-messages" id="messages">
+            <!-- Messages will be dynamically inserted here -->
+        </div>
+
+        <!-- Message Input Form (moved to bottom) -->
+        <!-- The chat form remains inside this container but will be positioned at the bottom via CSS -->
+        <form class="stranger-chat-input-form" id="chatForm">
+            <input type="text" placeholder="Type a message..." class="stranger-chat-input" value="" id="chatInput" autocomplete="off" disabled/>
+            <button type="submit" class="stranger-chat-send-button">
+            <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/omegle.js' %}"></script>
+
+{% endblock %}

@@ -16,3 +16,12 @@ def home(request):
 
 def privacy_and_policy(request):
     return render(request, 'privacy_and_policy.html')
+
+
+def chat(request):
+    """Render the anonymous chat page (no login required).
+
+    Template provides UI for text + video chat and includes the WebSocket
+    client logic which performs matchmaking and WebRTC signaling.
+    """
+    return render(request, 'crushimam/chat.html')

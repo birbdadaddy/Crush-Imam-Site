@@ -1,9 +1,12 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count
+
+from django.conf import settings
 
 
 class Profile(models.Model):
@@ -187,3 +190,25 @@ class Vote(models.Model):
 
     def __str__(self):
         return f"Like by {self.user.username} on {self.content_type}#{self.object_id}"
+    
+def report_upload_path(instance, filename):
+    # store under MEDIA_ROOT/reports/<report-id>/filename
+    return f'reports/{instance.id}/{filename}'
+
+
+class Report(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    room = models.CharField(max_length=255, blank=True, null=True)
+    timestamp = models.DateTimeField()
+    notes = models.TextField(blank=True)
+    # link to users: the reporter (who clicked report) and the reported user (if known)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='reports_made')
+    reported_user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name='reports_against')
+
+    local_image = models.ImageField(upload_to=report_upload_path, blank=True, null=True)
+    remote_image = models.ImageField(upload_to=report_upload_path, blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Report {self.id} @ {self.timestamp}'

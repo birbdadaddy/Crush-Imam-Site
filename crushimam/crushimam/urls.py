@@ -22,6 +22,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', views.home, name='home'),
+    path('chat/', views.chat, name='chat'),
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('confessions.urls')),
@@ -29,5 +30,14 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # During development serve static files directly from STATICFILES_DIRS
+    # (the project `static/` folder) rather than STATIC_ROOT which is
+    # normally populated by `collectstatic` for production.
+    static_root = None
+    try:
+        static_root = settings.STATICFILES_DIRS[0]
+    except Exception:
+        static_root = settings.STATIC_ROOT
+
+    urlpatterns += static(settings.STATIC_URL, document_root=static_root)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
