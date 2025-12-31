@@ -33,8 +33,8 @@
     </h2>
     <div class="partners-grid gold-grid gap-8">
       {% for partner in gold_partners %}
-      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
-        <div class="partner-card gold-partner h-full">
+      <div class="partner-card gold-partner h-full">
+            <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
           {% if partner.logo %}
           <div class="partner-logo-wrapper">
             <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
@@ -73,8 +73,8 @@
     </h2>
     <div class="partners-grid silver-grid gap-6">
       {% for partner in silver_partners %}
-      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
-        <div class="partner-card silver-partner h-full">
+      <div class="partner-card silver-partner h-full">
+            <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
           {% if partner.logo %}
           <div class="partner-logo-wrapper">
             <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
@@ -113,8 +113,8 @@
     </h2>
     <div class="partners-grid bronze-grid gap-6">
       {% for partner in bronze_partners %}
-      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
-        <div class="partner-card bronze-partner h-full">
+      <div class="partner-card bronze-partner h-full">
+            <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
           {% if partner.logo %}
           <div class="partner-logo-wrapper">
             <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">

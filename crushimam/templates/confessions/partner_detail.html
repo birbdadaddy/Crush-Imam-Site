@@ -30,7 +30,7 @@
         {% if partner.description %}
         <div class="partner-detail-description">
           <h2 class="section-title">About</h2>
-          <p>{{ partner.description }}</p>
+          <p>{{ partner.description|linebreaks }}</p>
         </div>
         {% endif %}
 
