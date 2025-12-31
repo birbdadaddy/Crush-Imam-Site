@@ -5,3 +5,4 @@ crushimam/db.sqlite3
 crushimam/confessions/__pycache__/
 crushimam/crushimam/__pycache__/
 crushimam/media/
+crushimam/confessions/crushimam/settings.py

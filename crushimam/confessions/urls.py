@@ -30,4 +30,10 @@ urlpatterns = [
     path('hall/<str:category>/create/', views.hall_create, name='hall_create'),
     path('hall/post/<int:pk>/', views.hall_detail, name='hall_detail'),
     path('hall/post/<int:pk>/delete/', views.delete_hall, name='hall_delete'),
+
+    path('verify_activation/', views.verify_activation, name='verify_activation'),
+    
+    # Partners and Sponsors
+    path('partners/', views.partners_list, name='partners_list'),
+    path('partners/<int:pk>/', views.partner_detail, name='partner_detail'),
     ]

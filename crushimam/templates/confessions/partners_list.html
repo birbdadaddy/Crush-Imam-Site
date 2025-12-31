@@ -1,0 +1,193 @@
+{% extends "crushimam/base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30">
+  <!-- Header Section -->
+  <div class="relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10"></div>
+    <div class="max-w-6xl mx-auto px-4 py-16 sm:py-24 relative">
+      <div class="text-center">
+        <div class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-indigo-200 rounded-full px-4 py-2 mb-6">
+          <i class="fas fa-handshake w-4 h-4 text-indigo-500"></i>
+          <span class="text-sm font-medium text-indigo-600">Our Partners & Sponsors</span>
+        </div>
+        
+        <h1 class="text-5xl sm:text-6xl md:text-7xl font-bold mb-6">
+          Our
+          <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Partners
+          </span>
+        </h1>
+        
+        <p class="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
+          Meet the amazing partners and sponsors who support Crush Imam. Together, we're building the best platform for our school community.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gold Partners Section -->
+  {% if gold_partners %}
+  <div class="partners-section max-w-6xl mx-auto px-4 py-16">
+    <h2 class="partners-section-title text-3xl sm:text-4xl font-bold text-slate-800 mb-12 text-center">
+      <i class="fas fa-crown text-yellow-500"></i> Gold Partners
+    </h2>
+    <div class="partners-grid gold-grid gap-8">
+      {% for partner in gold_partners %}
+      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
+        <div class="partner-card gold-partner h-full">
+          {% if partner.logo %}
+          <div class="partner-logo-wrapper">
+            <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+          </div>
+          {% else %}
+          <div class="partner-logo-placeholder">
+            <i class="fas fa-building text-indigo-300"></i>
+          </div>
+          {% endif %}
+          <div class="partner-content">
+            <h3 class="partner-name">{{ partner.name }}</h3>
+            <p class="partner-tier">{{ partner.get_tier_display }}</p>
+            {% if partner.description %}
+            <p class="partner-description">{{ partner.description|truncatewords:20 }}</p>
+            {% endif %}
+            <div class="partner-footer">
+              {% if partner.website %}
+              <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" class="partner-link">
+                <i class="fas fa-link"></i> Visit Site
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Silver Partners Section -->
+  {% if silver_partners %}
+  <div class="partners-section max-w-6xl mx-auto px-4 py-16">
+    <h2 class="partners-section-title text-3xl sm:text-4xl font-bold text-slate-800 mb-12 text-center">
+      <i class="fas fa-star text-gray-400"></i> Silver Partners
+    </h2>
+    <div class="partners-grid silver-grid gap-6">
+      {% for partner in silver_partners %}
+      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
+        <div class="partner-card silver-partner h-full">
+          {% if partner.logo %}
+          <div class="partner-logo-wrapper">
+            <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+          </div>
+          {% else %}
+          <div class="partner-logo-placeholder">
+            <i class="fas fa-building text-slate-300"></i>
+          </div>
+          {% endif %}
+          <div class="partner-content">
+            <h3 class="partner-name">{{ partner.name }}</h3>
+            <p class="partner-tier">{{ partner.get_tier_display }}</p>
+            {% if partner.description %}
+            <p class="partner-description">{{ partner.description|truncatewords:15 }}</p>
+            {% endif %}
+            <div class="partner-footer">
+              {% if partner.website %}
+              <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" class="partner-link">
+                <i class="fas fa-link"></i> Visit
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Bronze Partners Section -->
+  {% if bronze_partners %}
+  <div class="partners-section max-w-6xl mx-auto px-4 py-16">
+    <h2 class="partners-section-title text-3xl sm:text-4xl font-bold text-slate-800 mb-12 text-center">
+      <i class="fas fa-medal text-orange-600"></i> Bronze Partners
+    </h2>
+    <div class="partners-grid bronze-grid gap-6">
+      {% for partner in bronze_partners %}
+      <a href="{% url 'partner_detail' partner.pk %}" class="partner-card-link">
+        <div class="partner-card bronze-partner h-full">
+          {% if partner.logo %}
+          <div class="partner-logo-wrapper">
+            <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-logo">
+          </div>
+          {% else %}
+          <div class="partner-logo-placeholder">
+            <i class="fas fa-building text-orange-300"></i>
+          </div>
+          {% endif %}
+          <div class="partner-content">
+            <h3 class="partner-name">{{ partner.name }}</h3>
+            <p class="partner-tier">{{ partner.get_tier_display }}</p>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sponsors Section -->
+  {% if sponsors %}
+  <div class="partners-section max-w-6xl mx-auto px-4 py-16">
+    <h2 class="partners-section-title text-3xl sm:text-4xl font-bold text-slate-800 mb-12 text-center">
+      <i class="fas fa-heart text-rose-500"></i> Sponsors
+    </h2>
+    <div class="sponsors-grid gap-4">
+      {% for sponsor in sponsors %}
+      <a href="{% url 'partner_detail' sponsor.pk %}" class="sponsor-card-link">
+        <div class="sponsor-card">
+          {% if sponsor.logo %}
+          <img src="{{ sponsor.logo.url }}" alt="{{ sponsor.name }}" class="sponsor-logo">
+          {% else %}
+          <div class="sponsor-logo-placeholder">
+            <i class="fas fa-building text-slate-400"></i>
+          </div>
+          {% endif %}
+          <span class="sponsor-name">{{ sponsor.name }}</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Empty State -->
+  {% if not partners %}
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <div class="empty-state text-center">
+      <i class="fas fa-handshake text-slate-300 text-6xl mb-4 block"></i>
+      <p class="text-xl text-slate-600">No partners yet. Check back soon!</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- CTA Section -->
+  <div class="cta-section max-w-4xl mx-auto px-4 py-16">
+    <div class="bg-gradient-to-br from-indigo-500 to-purple-600 border-0 shadow-2xl overflow-hidden relative rounded-2xl">
+      <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCU2MCiPLz48L3N2Zz4=')] opacity-30"></div>
+      <div class="cta-card p-12 text-center relative z-10">
+        <i class="fas fa-handshake cta-icon text-white" style="font-size: 3rem;"></i>
+        <h2 class="cta-title text-3xl sm:text-4xl font-bold text-white mb-4">
+          Interested in Partnering?
+        </h2>
+        <p class="cta-description text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+          Help us grow Crush Imam and reach more students. Contact us to learn about partnership opportunities.
+        </p>
+        <a href="mailto:admin@crushimam.online?subject=Partnership%20Inquiry" class="btn bg-white text-indigo-600 hover:bg-slate-50 shadow-xl text-lg px-8 py-6 rounded-xl">
+          <i class="fas fa-envelope w-5 h-5 mr-2"></i>
+          Get in Touch
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

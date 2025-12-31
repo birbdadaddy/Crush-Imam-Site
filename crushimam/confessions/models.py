@@ -212,3 +212,44 @@ class Report(models.Model):
 
     def __str__(self):
         return f'Report {self.id} @ {self.timestamp}'
+
+class ActivationCode(models.Model):
+    code = models.CharField(max_length=100, unique=True)  # e.g., 'ABC123-XYZ' or UUID
+    hardware_id = models.CharField(max_length=255, blank=True, null=True)  # Bound machine ID
+    used = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.code
+
+
+class Partner(models.Model):
+    """Model for showcasing partners and sponsors."""
+    TIER_CHOICES = [
+        ('gold', 'Gold Partner'),
+        ('silver', 'Silver Partner'),
+        ('bronze', 'Bronze Partner'),
+        ('sponsor', 'Sponsor'),
+    ]
+    
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    logo = models.ImageField(upload_to='partners/', blank=True, null=True)
+    website = models.URLField(blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    tier = models.CharField(max_length=20, choices=TIER_CHOICES, default='sponsor')
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['tier', 'order', '-created_at']
+        verbose_name = 'Partner'
+        verbose_name_plural = 'Partners'
+
+    def __str__(self):
+        return f"{self.name} ({self.get_tier_display()})"
+
+    def get_absolute_url(self):
+        return reverse('partner_detail', args=[self.pk])

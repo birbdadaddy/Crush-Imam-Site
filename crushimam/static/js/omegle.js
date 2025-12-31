@@ -134,6 +134,7 @@
             } catch (e) {
                 console.error('getUserMedia failed:', e);
                 alert('Unable to access camera/microphone.');
+                alert(e);
                 throw e;
             }
         }
@@ -210,6 +211,7 @@
 
     // UI handlers
     startBtn.addEventListener('click', async() => {
+        await ensureLocalStream();
         if (!socket || socket.readyState !== WebSocket.OPEN) buildSocket();
         logStatus('Searching for stranger...');
         // toggle UI: hide Start, show Stop

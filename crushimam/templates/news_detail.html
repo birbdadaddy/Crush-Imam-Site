@@ -39,6 +39,17 @@
             <div class="confession-detail-card">
                 <div class="comments" style="margin-top:1.5rem">
                     <h4>Comments</h4>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
+                        {% csrf_token %}
+                        <input type="hidden" name="model" value="news">
+                        <input type="hidden" name="object_id" value="{{ news.pk }}">
+                        <textarea name="body" rows="3" placeholder="ktb comment dyalk..." required></textarea>
+                        <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Sifet</button>
+                    </form>
+                    {% else %}
+                        <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
+                    {% endif %}
                     <div class="comment-list">
                         {% for c in no_reply_comments %}
                             <div class="comment-item">
@@ -66,9 +77,9 @@
                                         <input type="hidden" name="model" value="news">
                                         <input type="hidden" name="object_id" value="{{ news.pk }}">
                                         <input type="hidden" name="parent_id" value="{{ c.pk }}">
-                                        <input type="text" name="body" placeholder="ktb reply..." required style="padding:6px 8px; border-radius:6px; border:1px solid #ddd;">
                                         <button type="submit" class="btn btn-small" style="margin-left:6px">Reply</button>
                                     </form>
+                                    <input type="text" name="body" placeholder="ktb reply..." required style="padding:6px 8px; border-radius:6px; border:1px solid #ddd;">
                                     {% endif %}
                                 </div>
 
@@ -105,17 +116,6 @@
                         {% endfor %}
                     </div>
 
-                    {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
-                        {% csrf_token %}
-                        <input type="hidden" name="model" value="news">
-                        <input type="hidden" name="object_id" value="{{ news.pk }}">
-                        <textarea name="body" rows="3" placeholder="ktb comment dyalk..." required></textarea>
-                        <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Sifet</button>
-                    </form>
-                    {% else %}
-                        <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
-                    {% endif %}
                 </div>
             </div>
         </div>

@@ -1,0 +1,122 @@
+{% extends "crushimam/base.html" %}
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30">
+  <!-- Back Button -->
+  <div class="max-w-4xl mx-auto px-4 py-6">
+    <a href="{% url 'partners_list' %}" class="btn-back inline-flex items-center gap-2">
+      <i class="fas fa-arrow-left"></i> Back to Partners
+    </a>
+  </div>
+
+  <!-- Partner Detail Card -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="partner-detail-card">
+      {% if partner.logo %}
+      <div class="partner-detail-logo-wrapper">
+        <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="partner-detail-logo">
+      </div>
+      {% else %}
+      <div class="partner-detail-logo-placeholder">
+        <i class="fas fa-building"></i>
+      </div>
+      {% endif %}
+
+      <div class="partner-detail-content">
+        <div class="partner-detail-header">
+          <h1 class="partner-detail-name">{{ partner.name }}</h1>
+          <span class="partner-detail-tier {{ partner.tier }}">{{ partner.get_tier_display }}</span>
+        </div>
+
+        {% if partner.description %}
+        <div class="partner-detail-description">
+          <h2 class="section-title">About</h2>
+          <p>{{ partner.description }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Contact Information -->
+        <div class="partner-detail-contact">
+          <h2 class="section-title">Contact Information</h2>
+          <div class="contact-list">
+            {% if partner.website %}
+            <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" class="contact-item">
+              <i class="fas fa-globe"></i>
+              <span>{{ partner.website }}</span>
+            </a>
+            {% endif %}
+
+            {% if partner.email %}
+            <a href="mailto:{{ partner.email }}" class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <span>{{ partner.email }}</span>
+            </a>
+            {% endif %}
+
+            {% if partner.phone %}
+            <a href="tel:{{ partner.phone }}" class="contact-item">
+              <i class="fas fa-phone"></i>
+              <span>{{ partner.phone }}</span>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Meta Information -->
+        <div class="partner-detail-meta">
+          <h2 class="section-title">Details</h2>
+          <div class="meta-list">
+            <div class="meta-item">
+              <span class="meta-label">Partner Since:</span>
+              <span class="meta-value">{{ partner.created_at|date:"F d, Y" }}</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Last Updated:</span>
+              <span class="meta-value">{{ partner.updated_at|date:"F d, Y" }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="partner-detail-actions">
+          <a href="{% url 'partners_list' %}" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Back to All Partners
+          </a>
+          {% if partner.website %}
+          <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <i class="fas fa-external-link-alt"></i> Visit Website
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Partners Section -->
+  <div class="max-w-6xl mx-auto px-4 py-16">
+    <h2 class="text-3xl font-bold text-slate-800 mb-8 text-center">Other Partners</h2>
+    <div class="related-partners-grid">
+      {% for p in related_partners %}
+      <a href="{% url 'partner_detail' p.pk %}" class="partner-card-link">
+        <div class="partner-card">
+          {% if p.logo %}
+          <div class="partner-logo-wrapper">
+            <img src="{{ p.logo.url }}" alt="{{ p.name }}" class="partner-logo">
+          </div>
+          {% else %}
+          <div class="partner-logo-placeholder">
+            <i class="fas fa-building"></i>
+          </div>
+          {% endif %}
+          <div class="partner-content">
+            <h3 class="partner-name">{{ p.name }}</h3>
+            <p class="partner-tier">{{ p.get_tier_display }}</p>
+          </div>
+        </div>
+      </a>
+      {% empty %}
+      <p class="text-slate-600 text-center col-span-full">No other partners available.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

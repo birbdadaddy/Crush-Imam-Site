@@ -5,8 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crush Imam</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1.0" />
-  <link rel="stylesheet" href="{% static 'css/omegle.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1.1" />
 
 
     <link rel="stylesheet" href="{% static 'css/fontawesome/css/all.min.css' %}" />
@@ -54,11 +53,13 @@
                 <span></span>
             </button>
             <ul class="nav-menu" id="navMenu">
+                <li class="nav-item"><a href="{% url 'home' %}" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
                 <li class="nav-item"><a href="{% url 'confessions_list' %}" class="nav-link"><i class="fas fa-comments"></i> Confessions</a></li>
                 <li class="nav-item"><a href="{% url 'news_list' %}" class="nav-link"><i class="fas fa-newspaper"></i> News</a></li>
                 <li class="nav-item"><a href="{% url 'hall_list' category='fame' %}" class="nav-link"><i class="fas fa-trophy"></i> Hall of Fame & Shame</a></li>
                 <li class="nav-item"><a href="{% url 'chat' %}" class="nav-link"><i class="fa-solid fa-user-group"></i></i> Chat</a></li>
                 <li class="nav-item"><a href="{% url 'flappy' %}" class="nav-link"><i class="fas fa-crow"></i> Flappy Bird</a></li>
+                <li class="nav-item"><a href="{% url 'partners_list' %}" class="nav-link"><i class="fas fa-handshake"></i> Partners</a></li>
                 {% if user.is_staff %}
                 <li class="nav-item"><a href="{% url 'flappy_photos_admin' %}" class="nav-link"><i class="fas fa-images"></i> Dumbass Pictures</a></li>
                 {% endif %}
@@ -66,7 +67,9 @@
                 <li class="user-menu">
                         <span class="user-greeting"><i class="fas fa-user"></i> {{ user.username }}</span>
                         <a href="{% url 'account_logout' %}" class="nav-link logout-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        {% if not user.is_staff %}
                         <a href="#" id="add_pfp" class="nav-link logout-link"><i class="fas fa-user-circle"></i> Add Profile Picture</a>
+                        {% endif %}
                 </li>
                     {% else %}
                         <li class="nav-item"><a href="{% url 'account_login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
@@ -126,6 +129,8 @@
         });
     });
     </script>
+
+    {% if request.path != '/chat/' %}
     <script>
         // CSRF helper
 function getCookie(name) {
@@ -192,6 +197,7 @@ if (add_pfp) {
     });
 }
 </script>
+    {% endif %}
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>

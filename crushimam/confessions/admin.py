@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Confession, News, FlappyPhoto, Comment, Vote, Report
+from .models import ActivationCode, Profile, Confession, News, FlappyPhoto, Comment, Vote, Report, HighScore, Partner
 
 
 @admin.register(Profile)
@@ -52,3 +52,40 @@ class ReportAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at',)
     search_fields = ('room',)
     list_filter = ('created_at',)
+
+@admin.register(HighScore)
+class HighScoreAdmin(admin.ModelAdmin):
+    list_display = ('user', 'score', 'achieved_at')
+    readonly_fields = ('achieved_at',)
+    search_fields = ('user__username',)
+    ordering = ('-score',)
+    list_filter = ('achieved_at',)
+
+@admin.register(ActivationCode)
+class ActivationCodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'used', 'hardware_id')
+    search_fields = ('code', 'hardware_id')
+
+
+@admin.register(Partner)
+class PartnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'tier', 'is_active', 'order', 'created_at')
+    list_filter = ('tier', 'is_active', 'created_at')
+    search_fields = ('name', 'description', 'email')
+    list_editable = ('order', 'is_active')
+    readonly_fields = ('created_at', 'updated_at')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'description', 'tier', 'logo')
+        }),
+        ('Contact Information', {
+            'fields': ('website', 'email', 'phone')
+        }),
+        ('Settings', {
+            'fields': ('is_active', 'order')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )

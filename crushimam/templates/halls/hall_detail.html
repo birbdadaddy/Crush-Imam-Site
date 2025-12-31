@@ -37,6 +37,17 @@
             <div class="confession-detail-card">
                 <div class="comments" style="margin-top:1.5rem">
                     <h4>Comments</h4>
+                    {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
+                        {% csrf_token %}
+                        <input type="hidden" name="model" value="hallpost">
+                        <input type="hidden" name="object_id" value="{{ post.pk }}">
+                        <textarea name="body" rows="3" placeholder="ktb comment dyalk..." required></textarea>
+                        <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Sifet</button>
+                    </form>
+                    {% else %}
+                        <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
+                    {% endif %}
                     <div class="comment-list">
                         {% for c in no_reply_comments %}
                             <div class="comment-item">
@@ -98,17 +109,6 @@
                         {% endfor %}
                     </div>
 
-                    {% if user.is_authenticated %}
-                    <form method="post" action="{% url 'add_comment' %}" class="comment-form" style="margin-top:.75rem">
-                        {% csrf_token %}
-                        <input type="hidden" name="model" value="hallpost">
-                        <input type="hidden" name="object_id" value="{{ post.pk }}">
-                        <textarea name="body" rows="3" placeholder="ktb comment dyalk..." required></textarea>
-                        <button type="submit" class="btn btn-primary" style="margin-top:.5rem">Sifet</button>
-                    </form>
-                    {% else %}
-                        <p class="muted"><a href="{% url 'account_login' %}">Login</a> bach tcommenta</p>
-                    {% endif %}
                 </div>
                 {% if user.is_staff %}
                 <div class="confession-detail-footer">

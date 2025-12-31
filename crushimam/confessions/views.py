@@ -3,14 +3,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Confession, Profile, News, ConfessionRequest, HallPost
+from .models import Confession, Profile, News, ConfessionRequest, HallPost, ActivationCode
 from .forms import NewsForm, ConfessionRequestForm
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_POST
 from .models import Comment, Vote
-
+from django.views.decorators.csrf import csrf_exempt
 
 # Helper: only staff/admin can post confessions
 def admin_required(view_func):
@@ -568,3 +569,69 @@ def add_vote(request):
         Vote.objects.create(user=request.user, content_type=ct, object_id=int(object_id))
 
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+@csrf_exempt
+def verify_activation(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        hardware_id = request.POST.get('hardware_id')
+        
+        if not code or not hardware_id:
+            return JsonResponse({'status': 'error', 'message': 'Missing code or hardware ID'}, status=400)
+        
+        try:
+            ac = ActivationCode.objects.get(code=code)
+            if ac.used:
+                if ac.hardware_id == hardware_id:
+                    return JsonResponse({'status': 'success'})
+                else:
+                    return JsonResponse({'status': 'error', 'message': 'Code bound to another machine'}, status=403)
+            else:
+                # Activate and bind
+                ac.hardware_id = hardware_id
+                ac.used = True
+                ac.save()
+                return JsonResponse({'status': 'success'})
+        except ActivationCode.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Invalid code'}, status=404)
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=405)
+
+
+def partners_list(request):
+    """Display all active partners and sponsors."""
+    from .models import Partner
+    
+    partners = Partner.objects.filter(is_active=True).order_by('tier', 'order')
+    
+    # Group partners by tier
+    gold_partners = partners.filter(tier='gold')
+    silver_partners = partners.filter(tier='silver')
+    bronze_partners = partners.filter(tier='bronze')
+    sponsors = partners.filter(tier='sponsor')
+    
+    context = {
+        'partners': partners,
+        'gold_partners': gold_partners,
+        'silver_partners': silver_partners,
+        'bronze_partners': bronze_partners,
+        'sponsors': sponsors,
+        'confessions_count': Confession.objects.count(),
+        'news_count': News.objects.count(),
+        'user_count': User.objects.count(),
+    }
+    
+    return render(request, 'confessions/partners_list.html', context)
+
+
+def partner_detail(request, pk):
+    """Display detailed information about a specific partner."""
+    from .models import Partner
+    
+    partner = get_object_or_404(Partner, pk=pk, is_active=True)
+    
+    context = {
+        'partner': partner,
+    }
+    
+    return render(request, 'confessions/partner_detail.html', context)

@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-l6_d9zyd4j8(hc!dku$lk6#j$r3&-40aub58q!fw6vto&ghsdy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['crushimam.online', 'www.crushimam.online']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -96,6 +96,15 @@ WSGI_APPLICATION = 'crushimam.wsgi.application'
 
 # ASGI application for Django Channels
 ASGI_APPLICATION = 'crushimam.asgi.application'
+
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://crushimam.online",
+#     "https://www.crushimam.online",
+# ]
+# CSRF_COOKIE_SECURE = True
+# SESSION_COOKIE_SECURE = True
+
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Simple in-memory channel layer for development. For production use Redis.
 CHANNEL_LAYERS = {

@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from confessions.models import Confession, News
+from confessions.models import Confession, News, Partner
 from django.contrib.auth.models import User
 
 def home(request):
@@ -7,10 +7,15 @@ def home(request):
     confessions_count = Confession.objects.all().count()
     news_count = News.objects.all().count()
     user_count = User.objects.all().count()
+    
+    # Get featured partners (gold and silver partners)
+    featured_partners = Partner.objects.filter(is_active=True, tier__in=['gold', 'silver']).order_by('tier', 'order')[:6]
+    
     context = {'news_list': news_list,
                 'confessions_count': confessions_count,
                 'news_count': news_count,
-                'user_count': user_count
+                'user_count': user_count,
+                'featured_partners': featured_partners,
     }
     return render(request, 'crushimam/home.html', context)
 
