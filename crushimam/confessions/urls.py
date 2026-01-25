@@ -36,4 +36,9 @@ urlpatterns = [
     # Partners and Sponsors
     path('partners/', views.partners_list, name='partners_list'),
     path('partners/<int:pk>/', views.partner_detail, name='partner_detail'),
+    
+    # Grade Calculator
+    path('grades/', views.grade_calculator, name='grade_calculator'),
+    path('grades/history/', views.grade_history, name='grade_history'),
+    path('grades/<int:pk>/', views.grade_detail, name='grade_detail'),
     ]

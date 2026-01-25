@@ -1,0 +1,531 @@
+{% extends "crushimam/base.html" %}
+
+{% block title %}{{ profile_user.username }} - Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Cover Photo -->
+    <div class="cover-photo">
+        {% if profile.cover_photo %}
+            <img src="{{ profile.cover_photo.url }}" alt="Cover">
+        {% else %}
+            <div class="cover-placeholder"></div>
+        {% endif %}
+    </div>
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-avatar-large">
+            {% if profile.profile_picture %}
+                <img src="{{ profile.profile_picture.url }}" alt="{{ profile_user.username }}">
+            {% else %}
+                <div class="avatar-placeholder-large">{{ profile_user.username|first|upper }}</div>
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-title">
+                <h1>{{ profile_user.username }}
+                    {% if profile.verified %}<span class="verified-badge">✓</span>{% endif %}
+                </h1>
+                {% if profile.bio %}
+                    <p class="bio">{{ profile.bio }}</p>
+                {% endif %}
+            </div>
+
+            {% if profile.location or profile.website %}
+            <div class="profile-details">
+                {% if profile.location %}
+                    <span>📍 {{ profile.location }}</span>
+                {% endif %}
+                {% if profile.website %}
+                    <a href="{{ profile.website }}" target="_blank">🔗 {{ profile.website }}</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Profile Stats -->
+            <div class="profile-stats">
+                <div class="stat">
+                    <strong>{{ posts_count }}</strong>
+                    <span>Posts</span>
+                </div>
+                <div class="stat">
+                    <strong>{{ followers_count }}</strong>
+                    <span>Followers</span>
+                </div>
+                <div class="stat">
+                    <strong>{{ following_count }}</strong>
+                    <span>Following</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="profile-actions">
+                {% if is_own_profile %}
+                    <a href="{% url 'social:edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+                    <a href="{% url 'social:create_post' %}" class="btn btn-secondary">Create Post</a>
+                {% else %}
+                    {% if is_blocked %}
+                        <form action="{% url 'social:unblock_user' profile_user.username %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Unblock</button>
+                        </form>
+                    {% else %}
+                        {% if is_following %}
+                            <form action="{% url 'social:unfollow_user' profile_user.username %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-secondary">Following</button>
+                            </form>
+                        {% else %}
+                            <form action="{% url 'social:follow_user' profile_user.username %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Follow</button>
+                            </form>
+                        {% endif %}
+                        <a href="{% url 'social:start_conversation' profile_user.username %}" class="btn btn-secondary">Message</a>
+                        <button class="btn btn-danger" onclick="blockUser('{{ profile_user.username }}')">Block</button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Tabs -->
+    <div class="profile-tabs">
+        <button class="tab-btn active" data-tab="posts">Posts</button>
+        {% if is_own_profile %}
+            <button class="tab-btn" data-tab="saved">Saved</button>
+        {% endif %}
+    </div>
+
+    <!-- Posts Grid -->
+    <div class="profile-content">
+        <div id="posts-tab" class="tab-content active">
+            {% if posts %}
+                <div class="posts-grid">
+                    {% for post in posts %}
+                    <a href="{% url 'social:post_detail' post.id %}" class="post-grid-item">
+                        {% if post.media.all %}
+                            <div class="grid-post-media">
+                                {% if post.media.first.media_type == 'image' %}
+                                    <img src="{{ post.media.first.media_file.url }}" alt="Post">
+                                {% else %}
+                                    <div class="video-thumbnail">
+                                        <video>
+                                            <source src="{{ post.media.first.media_file.url }}" type="video/mp4">
+                                        </video>
+                                        <span class="video-badge">🎬</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="grid-post-text">{{ post.caption|truncatewords:15 }}</div>
+                        {% endif %}
+                        <div class="grid-post-overlay">
+                            <span>👍 {{ post.likes.count }}</span>
+                            <span>💬 {{ post.comments.count }}</span>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1">First</a>
+                        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    <span class="page-info">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div class="empty-state">
+                    <p>No posts yet</p>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if is_own_profile %}
+        <div id="saved-tab" class="tab-content">
+            <!-- Saved posts would go here -->
+            <div class="empty-state">
+                <p>Saved posts appear here</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.profile-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.cover-photo {
+    height: 300px;
+    background: #e0e0e0;
+    overflow: hidden;
+}
+
+.cover-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.profile-header {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-bottom: 1px solid #e0e0e0;
+    margin-top: -60px;
+    position: relative;
+}
+
+.profile-avatar-large {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid white;
+    flex-shrink: 0;
+}
+
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder-large {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 48px;
+}
+
+.profile-info {
+    flex: 1;
+    padding-top: 20px;
+}
+
+.profile-title h1 {
+    margin: 0 0 8px 0;
+    font-size: 32px;
+}
+
+.verified-badge {
+    color: #1da1f2;
+    font-size: 20px;
+}
+
+.bio {
+    margin: 0 0 12px 0;
+    color: #65676b;
+    font-size: 15px;
+}
+
+.profile-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    color: #65676b;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat strong {
+    font-size: 18px;
+}
+
+.stat span {
+    font-size: 14px;
+    color: #65676b;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-secondary {
+    background: #f0f2f5;
+    color: #000;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.btn-danger {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+}
+
+.profile-tabs {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    padding: 0 20px;
+}
+
+.tab-btn {
+    padding: 16px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    color: #65676b;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: #000;
+    border-bottom-color: #667eea;
+}
+
+.profile-content {
+    background: white;
+    padding: 20px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.post-grid-item {
+    position: relative;
+    aspect-ratio: 1;
+    background: #f0f2f5;
+    border-radius: 8px;
+    overflow: hidden;
+    text-decoration: none;
+    cursor: pointer;
+    group: hover;
+}
+
+.grid-post-media {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.grid-post-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.video-thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.grid-post-text {
+    padding: 16px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #65676b;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.grid-post-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.post-grid-item:hover .grid-post-overlay {
+    opacity: 1;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #65676b;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.pagination a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #f0f2f5;
+    color: #667eea;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background: #667eea;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .profile-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-top: -40px;
+    }
+
+    .profile-avatar-large {
+        margin: 0 auto;
+    }
+
+    .profile-stats {
+        justify-content: center;
+    }
+
+    .profile-actions {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .posts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+}
+</style>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const tab = this.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById(tab + '-tab').classList.add('active');
+    });
+});
+
+function blockUser(username) {
+    if (confirm('Are you sure you want to block this user?')) {
+        fetch(`/social/profile/${username}/block/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+        .then(() => location.reload());
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

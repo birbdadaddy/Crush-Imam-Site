@@ -1,0 +1,269 @@
+{% extends "crushimam/base.html" %}
+
+{% block title %}Create Post - CrushImam Social{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 40px;">
+    <div class="post-create-container">
+        <h1>Create a New Post</h1>
+
+        <form method="POST" enctype="multipart/form-data" class="post-create-form">
+            {% csrf_token %}
+
+            <!-- Caption -->
+            <div class="form-group">
+                <label for="id_caption">What's on your mind?</label>
+                {{ form.caption }}
+                {% if form.caption.errors %}
+                    <div class="error-message">{{ form.caption.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Media Upload -->
+            <div class="form-group">
+                <label>Upload Media (Images/Videos)</label>
+                <input type="file" name="media_files" multiple accept="image/*,video/*" class="form-control">
+                <small class="text-muted">You can upload multiple files. Supported formats: JPG, PNG, GIF, MP4, WebM</small>
+            </div>
+
+            <!-- Media Preview -->
+            <div id="media-preview" style="display: none;">
+                <h4>Preview</h4>
+                <div id="preview-container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;"></div>
+            </div>
+
+            <!-- Privacy Options -->
+            <div class="form-group">
+                <h4>Privacy & Settings</h4>
+
+                <div class="checkbox-group">
+                    {{ form.is_anonymous }}
+                    <label for="id_is_anonymous">Post as Anonymous</label>
+                </div>
+
+                <div class="checkbox-group">
+                    {{ form.allow_comments }}
+                    <label for="id_allow_comments">Allow Comments</label>
+                </div>
+
+                <div class="checkbox-group">
+                    {{ form.allow_likes }}
+                    <label for="id_allow_likes">Allow Likes</label>
+                </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">Post</button>
+                <a href="{% url 'social:feed' %}" class="btn btn-secondary btn-lg">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.post-create-container {
+    background: white;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.post-create-container h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #000;
+    font-size: 28px;
+}
+
+.post-create-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #000;
+}
+
+.form-group h4 {
+    margin: 0 0 12px 0;
+    color: #000;
+}
+
+.form-group textarea,
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group textarea:focus,
+.form-group input[type="file"]:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-group label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 400;
+}
+
+.text-muted {
+    font-size: 12px;
+    color: #65676b;
+    display: block;
+    margin-top: 6px;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+#preview-container {
+    border-radius: 6px;
+    padding: 12px;
+    background: #f8f9fa;
+}
+
+.preview-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #e0e0e0;
+}
+
+.preview-item img,
+.preview-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5568d3;
+}
+
+.btn-secondary {
+    background: #f0f2f5;
+    color: #000;
+}
+
+.btn-secondary:hover {
+    background: #e0e0e0;
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    .post-create-container {
+        padding: 20px;
+    }
+
+    .post-create-container h1 {
+        font-size: 24px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}
+</style>
+
+<script>
+const fileInput = document.querySelector('input[name="media_files"]');
+const previewContainer = document.getElementById('preview-container');
+const mediaPreview = document.getElementById('media-preview');
+
+fileInput.addEventListener('change', function(e) {
+    previewContainer.innerHTML = '';
+    const files = Array.from(this.files);
+
+    if (files.length > 0) {
+        mediaPreview.style.display = 'block';
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+
+                if (file.type.startsWith('image/')) {
+                    item.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                } else if (file.type.startsWith('video/')) {
+                    item.innerHTML = `<video><source src="${event.target.result}"></video>`;
+                }
+
+                previewContainer.appendChild(item);
+            };
+            reader.readAsDataURL(file);
+        });
+    } else {
+        mediaPreview.style.display = 'none';
+    }
+});
+</script>
+{% endblock %}

@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('', include('confessions.urls')),
+    path('social/', include('social.urls')),
     path('privacy-policy/', views.privacy_and_policy, name='privacy_and_policy'),
 ]
 

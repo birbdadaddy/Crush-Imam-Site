@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ActivationCode, Profile, Confession, News, FlappyPhoto, Comment, Vote, Report, HighScore, Partner
+from .models import ActivationCode, Profile, Confession, News, FlappyPhoto, Comment, Vote, Report, HighScore, Partner, GradeCalculation
 
 
 @admin.register(Profile)
@@ -89,3 +89,29 @@ class PartnerAdmin(admin.ModelAdmin):
             'classes': ('collapse',)
         }),
     )
+
+
+@admin.register(GradeCalculation)
+class GradeCalculationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'level', 'get_branch_display', 'calculated_average', 'created_at')
+    list_filter = ('level', 'branch', 'created_at')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name')
+    readonly_fields = ('created_at', 'updated_at')
+    date_hierarchy = 'created_at'
+    
+    fieldsets = (
+        ('Student Information', {
+            'fields': ('user', 'level', 'branch')
+        }),
+        ('Grades', {
+            'fields': ('subjects_data', 'calculated_average')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def get_branch_display(self, obj):
+        return obj.branch or 'N/A'
+    get_branch_display.short_description = 'Branch'

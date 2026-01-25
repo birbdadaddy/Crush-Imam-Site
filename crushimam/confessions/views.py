@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Confession, Profile, News, ConfessionRequest, HallPost, ActivationCode
-from .forms import NewsForm, ConfessionRequestForm
+from .models import Confession, Profile, News, ConfessionRequest, HallPost, ActivationCode, GradeCalculation
+from .forms import NewsForm, ConfessionRequestForm, GradeCalculationForm
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.http import require_POST
 from .models import Comment, Vote
@@ -635,3 +635,135 @@ def partner_detail(request, pk):
     }
     
     return render(request, 'confessions/partner_detail.html', context)
+
+
+def grade_calculator(request):
+    """Calculate final grades for Moroccan students with exams and behavior."""
+    form = GradeCalculationForm(request.POST or None)
+    result = None
+    average = None
+    subjects_data = {}
+    
+    if request.method == 'POST':
+        level = request.POST.get('level')
+        branch = request.POST.get('branch')
+        num_exams = 4
+        
+        if level:
+            # Recreate form with subject fields
+            form = GradeCalculationForm(request.POST)
+            form.add_subject_fields(level, branch, num_exams)
+            
+            if form.is_valid():
+                # Extract exam and behavior data from form
+                subjects_data = {}
+                
+                # Get coefficients
+                from .models import GradeCalculation as GradeCalcModel
+                coefficients = GradeCalcModel.SUBJECT_COEFFICIENTS.get(level, {}).get(branch, {})
+                
+                for subject in coefficients.keys():
+                    subject_key = subject.lower().replace(" ", "_")
+                    exams = []
+                    
+                    # Collect exam grades
+                    for exam_num in range(1, int(num_exams) + 1):
+                        field_name = f'exam_{subject_key}_{exam_num}'
+                        if field_name in form.cleaned_data and form.cleaned_data[field_name] is not None:
+                            exams.append(form.cleaned_data[field_name])
+                    
+                    # Get behavior grade
+                    behavior_field_name = f'behavior_{subject_key}'
+                    behavior = form.cleaned_data.get(behavior_field_name)
+                    
+                    # Only save if at least one exam is entered
+                    if exams:
+                        subjects_data[subject] = {
+                            'exams': exams,
+                            'behavior': behavior or 0,
+                            'coefficient': coefficients.get(subject, 1)
+                        }
+                
+                # Save to database
+                if subjects_data:
+                    if request.user.is_authenticated:
+                        calculation = GradeCalculation.objects.create(
+                            user=request.user,
+                            level=level,
+                            branch=branch,
+                            subjects_data=subjects_data
+                        )
+                        average = calculation.calculate_average()
+                        calculation.save()
+                        result = True
+                    else:
+                        # For anonymous users, just calculate without saving
+                        calculation = GradeCalculation(
+                            user=None,
+                            level=level,
+                            branch=branch,
+                            subjects_data=subjects_data
+                        )
+                        average = calculation.calculate_average()
+                        result = True
+    else:
+        # GET request - show initial form
+        form = GradeCalculationForm()
+    
+    context = {
+        'form': form,
+        'result': result,
+        'average': average,
+        'subjects_data': subjects_data,
+    }
+    
+    return render(request, 'confessions/grade_calculator.html', context)
+
+
+@login_required
+def grade_history(request):
+    """Display user's grade calculation history."""
+    calculations = request.user.grade_calculations.all().order_by('-created_at')
+    
+    paginator = Paginator(calculations, 10)
+    page = request.GET.get('page')
+    try:
+        calculations_page = paginator.page(page)
+    except PageNotAnInteger:
+        calculations_page = paginator.page(1)
+    except EmptyPage:
+        calculations_page = paginator.page(paginator.num_pages)
+    
+    context = {
+        'calculations': calculations_page,
+        'paginator': paginator,
+    }
+    
+    return render(request, 'confessions/grade_history.html', context)
+
+
+@login_required
+def grade_detail(request, pk):
+    """Display details of a specific grade calculation."""
+    calculation = get_object_or_404(GradeCalculation, pk=pk, user=request.user)
+    
+    # Compute subject averages for display
+    subjects_with_avg = {}
+    for subject, data in calculation.subjects_data.items():
+        subject_avg = calculation.calculate_subject_average(data)
+        subjects_with_avg[subject] = {
+            **data,
+            'subject_average': subject_avg
+        }
+    
+    sum_coefficients = sum(data['coefficient'] for data in calculation.subjects_data.values())
+    total_exams = sum(len(data['exams']) for data in calculation.subjects_data.values())
+    
+    context = {
+        'calculation': calculation,
+        'subjects_with_avg': subjects_with_avg,
+        'sum_coefficients': sum_coefficients,\
+        'total_exams': total_exams,
+    }
+    
+    return render(request, 'confessions/grade_detail.html', context)

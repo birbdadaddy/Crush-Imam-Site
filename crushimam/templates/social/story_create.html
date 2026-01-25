@@ -1,0 +1,12 @@
+{% extends "crushimam/base.html" %}
+{% block title %}Create Story{% endblock %}
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto;">
+    <h1>Create a Story</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn" style="padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 20px;">Create Story</button>
+    </form>
+</div>
+{% endblock %}

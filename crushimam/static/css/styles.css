@@ -1491,7 +1491,7 @@ input[type="file"] {
 .header {
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(226, 232, 240, 0.5);
@@ -1694,7 +1694,7 @@ input[type="file"] {
     border: none;
     cursor: pointer;
     padding: 0;
-    z-index: 1001;
+    z-index: 100;
 }
 
 .menu-toggle span {
@@ -1767,7 +1767,7 @@ input[type="file"] {
     height: 100%;
     background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(4px);
-    z-index: 999;
+    z-index: 99;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -1794,7 +1794,7 @@ input[type="file"] {
 
 /* ==================== RESPONSIVE DESIGN ==================== */
 
-@media (max-width: 1540px) {
+@media (max-width: 1400px) {
     .menu-toggle {
         display: flex;
         animation: menuToggleAppear 0.4s ease-in-out;
@@ -1817,7 +1817,7 @@ input[type="file"] {
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
         transition: right 0.3s ease;
         overflow-y: auto;
-        z-index: 1000;
+        z-index: 100;
     }
     .nav-menu.active {
         display: flex;

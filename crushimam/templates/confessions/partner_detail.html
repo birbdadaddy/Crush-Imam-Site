@@ -4,7 +4,7 @@
   <!-- Back Button -->
   <div class="max-w-4xl mx-auto px-4 py-6">
     <a href="{% url 'partners_list' %}" class="btn-back inline-flex items-center gap-2">
-      <i class="fas fa-arrow-left"></i> Back to Partners
+      <i class="fas fa-arrow-left"></i> Rj3 n Partners
     </a>
   </div>
 
@@ -79,11 +79,11 @@
         <!-- Action Buttons -->
         <div class="partner-detail-actions">
           <a href="{% url 'partners_list' %}" class="btn btn-primary">
-            <i class="fas fa-arrow-left"></i> Back to All Partners
+            <i class="fas fa-arrow-left"></i> Rj3 n Partners
           </a>
           {% if partner.website %}
           <a href="{{ partner.website }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-            <i class="fas fa-external-link-alt"></i> Visit Website
+            <i class="fas fa-external-link-alt"></i> Chof Website
           </a>
           {% endif %}
         </div>
@@ -93,7 +93,7 @@
 
   <!-- Related Partners Section -->
   <div class="max-w-6xl mx-auto px-4 py-16">
-    <h2 class="text-3xl font-bold text-slate-800 mb-8 text-center">Other Partners</h2>
+    <h2 class="text-3xl font-bold text-slate-800 mb-8 text-center">Partners akhrin</h2>
     <div class="related-partners-grid">
       {% for p in related_partners %}
       <a href="{% url 'partner_detail' p.pk %}" class="partner-card-link">
@@ -114,7 +114,7 @@
         </div>
       </a>
       {% empty %}
-      <p class="text-slate-600 text-center col-span-full">No other partners available.</p>
+      <p class="text-slate-600 text-center col-span-full">Ba9i ma kaynch akhrin.</p>
       {% endfor %}
     </div>
   </div>

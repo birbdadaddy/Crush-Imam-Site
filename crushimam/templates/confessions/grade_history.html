@@ -1,0 +1,93 @@
+{% extends "crushimam/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-4xl" style="animation: fadeIn 0.6s ease-out;">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-blue-600">History d no9atk</h1>
+            <a href="{% url 'grade_calculator' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                7sb mara akhra
+            </a>
+        </div>
+        
+        {% if calculations %}
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-100 border-b-2 border-gray-300">
+                            <th class="text-left px-4 py-3 font-semibold">Mostawa</th>
+                            <th class="text-left px-4 py-3 font-semibold">Cho3ba</th>
+                            <th class="text-left px-4 py-3 font-semibold">Mo3adal</th>
+                            <th class="text-left px-4 py-3 font-semibold">T9yim</th>
+                            <th class="text-left px-4 py-3 font-semibold">Tarikh</th>
+                            <th class="text-center px-4 py-3 font-semibold">Tools</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for calc in calculations %}
+                        <tr class="border-b hover:bg-gray-50 transition">
+                            <td class="px-4 py-3">{{ calc.get_level_display }}</td>
+                            <td class="px-4 py-3">{{ calc.get_branch_display|default:"N/A" }}</td>
+                            <td class="px-4 py-3">
+                                <span class="font-bold text-lg">
+                                    {% if calc.calculated_average %}
+                                        {{ calc.calculated_average|floatformat:2 }}/20
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3">
+                                {% if calc.calculated_average %}
+                                    {% if calc.calculated_average >= 16 %}
+                                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Nta m9awd 🌟</span>
+                                    {% elif calc.calculated_average >= 14 %}
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Chdiwd nta ⭐</span>
+                                    {% elif calc.calculated_average >= 12 %}
+                                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Kayna ✓</span>
+                                    {% elif calc.calculated_average >= 10 %}
+                                        <span class="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm">Naja7</span>
+                                    {% else %}
+                                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Jm3 krk</span>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-gray-600">{{ calc.created_at|date:"Y-m-d H:i" }}</td>
+                            <td class="px-4 py-3 text-center">
+                                <a href="{% url 'grade_detail' calc.id %}" class="text-blue-600 hover:text-blue-800 font-semibold">Show</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if paginator.num_pages > 1 %}
+            <div class="flex justify-center gap-2 mt-8">
+                {% if calculations.has_previous %}
+                    <a href="?page=1" class="px-3 py-2 bg-gray-300 text-gray-700 rounded">First</a>
+                    <a href="?page={{ calculations.previous_page_number }}" class="px-3 py-2 bg-gray-300 text-gray-700 rounded">Previous</a>
+                {% endif %}
+                
+                <span class="px-3 py-2">page {{ calculations.number }} to {{ paginator.num_pages }}</span>
+                
+                {% if calculations.has_next %}
+                    <a href="?page={{ calculations.next_page_number }}" class="px-3 py-2 bg-blue-600 text-white rounded">Next</a>
+                    <a href="?page={{ paginator.num_pages }}" class="px-3 py-2 bg-blue-600 text-white rounded">Last</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 p-6 text-center">
+                <p class="text-lg">Ba9i ma 7sbti no9atk</p>
+                <p class="text-gray-600 mt-2">7sb db</p>
+                <a href="{% url 'grade_calculator' %}" class="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                    Bda db
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

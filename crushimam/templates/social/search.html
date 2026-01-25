@@ -1,0 +1,46 @@
+{% extends "crushimam/base.html" %}
+{% block title %}Search - CrushImam Social{% endblock %}
+{% block content %}
+<div style="max-width: 800px; margin: 20px auto;">
+    <form method="GET" style="margin-bottom: 30px;">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search users, posts, hashtags..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 24px; font-size: 14px;">
+    </form>
+
+    {% if query %}
+        {% if results.users %}
+        <h2>Users</h2>
+        <div>
+            {% for user in results.users %}
+            <a href="{% url 'social:profile' user.username %}" style="display: block; padding: 12px; background: white; margin-bottom: 8px; border-radius: 8px; text-decoration: none; color: #000;">
+                <strong>{{ user.username }}</strong>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if results.posts %}
+        <h2>Posts</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;">
+            {% for post in results.posts %}
+            <a href="{% url 'social:post_detail' post.id %}" style="padding: 12px; background: white; border-radius: 8px; text-decoration: none; color: #000; max-height: 100px; overflow: hidden;">
+                {{ post.caption|truncatewords:15 }}
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if results.hashtags %}
+        <h2>Hashtags</h2>
+        <div>
+            {% for tag in results.hashtags %}
+            <a href="#" style="display: block; padding: 12px; background: white; margin-bottom: 8px; border-radius: 8px; text-decoration: none; color: #667eea;">
+                #{{ tag.tag }} <small>({{ tag.usage_count }} posts)</small>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% else %}
+        <p style="text-align: center; color: #65676b;">Try searching for users, posts, or hashtags</p>
+    {% endif %}
+</div>
+{% endblock %}

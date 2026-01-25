@@ -1,0 +1,30 @@
+{% extends "crushimam/base.html" %}
+{% block title %}{{ post.author.username }}'s Post - CrushImam Social{% endblock %}
+{% block content %}
+<div style="max-width: 600px; margin: 20px auto; background: white; border-radius: 8px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div>
+            <h3>{{ post.author.username }}</h3>
+            <small>{{ post.created_at|timesince }} ago</small>
+        </div>
+    </div>
+    {% if post.caption %}
+    <p>{{ post.caption }}</p>
+    {% endif %}
+    {% if post.media.all %}
+    <div style="margin: 20px 0;">
+        {% for media in post.media.all %}
+        {% if media.media_type == 'image' %}
+            <img src="{{ media.media_file.url }}" style="width: 100%; border-radius: 8px; margin-bottom: 12px;">
+        {% else %}
+            <video style="width: 100%; border-radius: 8px; margin-bottom: 12px; max-height: 400px;" controls><source src="{{ media.media_file.url }}"></video>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div style="display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; margin: 16px 0;">
+        <button onclick="likePost()" style="background: none; border: none; cursor: pointer; color: #65676b; font-weight: 600;">👍 {{ post.likes.count }} Likes</button>
+        <span style="color: #65676b; font-weight: 600;">💬 {{ post.comments.count }} Comments</span>
+    </div>
+</div>
+{% endblock %}

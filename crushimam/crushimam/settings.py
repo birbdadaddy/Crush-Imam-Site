@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     # Channels for WebSocket support
     'channels',
 
+    # Apps
     'confessions',
+    'social',
 ]
 
 MIDDLEWARE = [

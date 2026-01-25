@@ -1,0 +1,194 @@
+{% extends "crushimam/base.html" %}
+
+{% block title %}Messages - CrushImam Social{% endblock %}
+
+{% block content %}
+<div class="messages-container">
+    <div class="conversations-list">
+        <h2>Messages</h2>
+
+        {% if conversations %}
+            <div class="conversations">
+                {% for conv in conversations %}
+                <a href="{% url 'social:conversation_detail' conv.id %}" class="conversation-item">
+                    <div class="conversation-avatar">
+                        {% for participant in conv.participants.all %}
+                            {% if participant != user %}
+                                {% if participant.social_profile.profile_picture %}
+                                    <img src="{{ participant.social_profile.profile_picture.url }}" alt="{{ participant.username }}">
+                                {% else %}
+                                    <div class="avatar-placeholder">{{ participant.username|first|upper }}</div>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="conversation-info">
+                        <h4 class="conversation-name">
+                            {% for participant in conv.participants.all %}
+                                {% if participant != user %}
+                                    {{ participant.username }}
+                                {% endif %}
+                            {% endfor %}
+                        </h4>
+                        {% if conv.last_message %}
+                            <p class="conversation-preview">{{ conv.last_message.text|truncatewords:10 }}</p>
+                        {% endif %}
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
+            {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="page-info">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="empty-state">
+                <p>No conversations yet</p>
+                <a href="{% url 'social:feed' %}" class="btn btn-primary">Start Messaging</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.messages-container {
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.conversations-list {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.conversations-list h2 {
+    padding: 20px;
+    margin: 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.conversations {
+    display: flex;
+    flex-direction: column;
+}
+
+.conversation-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    text-decoration: none;
+    color: #000;
+    transition: background 0.2s;
+}
+
+.conversation-item:hover {
+    background: #f8f9fa;
+}
+
+.conversation-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.conversation-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #667eea;
+    color: white;
+    font-weight: bold;
+}
+
+.conversation-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.conversation-name {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.conversation-preview {
+    margin: 0;
+    font-size: 13px;
+    color: #65676b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #65676b;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #5568d3;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.pagination a {
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: #f0f2f5;
+    color: #667eea;
+    text-decoration: none;
+}
+
+.pagination a:hover {
+    background: #667eea;
+    color: white;
+}
+</style>
+{% endblock %}

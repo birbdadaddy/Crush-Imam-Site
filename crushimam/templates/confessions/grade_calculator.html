@@ -1,0 +1,490 @@
+{% extends "crushimam/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 max-w-4xl" style="animation: fadeIn 0.6s ease-out;">
+    <div class="bg-white rounded-lg shadow-lg p-8">
+        <h1 class="text-3xl font-bold text-center mb-2 text-blue-600">Grade Caulculator</h1>
+        <p class="text-center text-gray-600 mb-8">7sb no9atk</p>
+        
+        {% if result %}
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
+            <p class="font-bold">7sab tam bi naja3 ✓</p>
+            <p class="text-lg mt-2">Mo3adal: <span class="font-bold text-2xl">{{ average|floatformat:2 }}/20</span></p>
+        </div>
+        {% endif %}
+        
+        <form method="post" class="space-y-6" id="gradeForm">
+            {% csrf_token %}
+            
+            <!-- Level Selection -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                <div>
+                    <label for="id_level" class="block text-sm font-medium text-gray-700 mb-2">Khtar mostawa *</label>
+                    {{ form.level }}
+                    {% if form.level.errors %}
+                        <div class="text-red-600 text-sm mt-1">{{ form.level.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <!-- Branch Selection -->
+                <div id="branch-container" style="display: none;">
+                    <label for="id_branch" class="block text-sm font-medium text-gray-700 mb-2">Khtar cho3ba *</label>
+                    {{ form.branch }}
+                    {% if form.branch.errors %}
+                        <div class="text-red-600 text-sm mt-1">{{ form.branch.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Subject Fields Container -->
+            <div id="subjects-container" class="space-y-6">
+                <!-- Will be populated by JavaScript -->
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="flex gap-4 pt-4 border-t-2">
+                <button type="submit" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center">
+                    7sb
+                </button>
+                <a href="{% url 'grade_history' %}" class="btn flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded text-center">
+                    History
+                </a>
+            </div>
+        </form>
+        
+        <!-- Display results if available -->
+        {% if subjects_data %}
+        <div class="mt-8 pt-8 border-t-2">
+            <h2 class="text-2xl font-bold mb-4">Tafasil</h2>
+            
+            {% for subject, data in subjects_data.items %}
+            <div class="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg mb-4">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">{{ subject }}</h3>
+                        <p class="text-sm text-gray-600">Mo3amil: <span class="font-semibold">{{ data.coefficient }}</span></p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                    <div>
+                        <span class="text-gray-600">Mti7anat:</span>
+                        <div class="flex gap-2 mt-1 flex-wrap">
+                            {% for exam in data.exams %}
+                                <span class="bg-blue-500 text-white px-2 py-1 rounded">{{ exam }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-gray-600">Solok:</span>
+                        <span class="bg-green-500 text-white px-2 py-1 rounded inline-block mt-1">{{ data.behavior }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            {% if average %}
+            <div class="mt-6 bg-blue-50 border-2 border-blue-600 p-6 rounded-lg">
+                <h3 class="text-center text-xl font-bold text-blue-600 mb-2">Mo3adal</h3>
+                <p class="text-center text-4xl font-bold text-blue-600">{{ average|floatformat:2 }}/20</p>
+                <p class="text-center text-gray-600 mt-2">
+                    {% if average >= 16 %}
+                    Nta m9awd 🌟🌟🌟
+                    {% elif average >= 14 %}
+                    Chdiwd nta ⭐⭐
+                    {% elif average >= 12 %}
+                    Kayna ✓
+                    {% elif average >= 10 %}
+                    Lmohim nta naja7
+                    {% else %}
+                    Jma3 kark 📚
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Subject coefficients (same as backend)
+const coefficients = {
+
+    '5eme': {
+        'sc': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 3,
+            'English': 3,
+            'Mathematics': 4,
+            'Physics & Chemistry': 4,
+            'SVT': 4,
+            'History & Geography': 2,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 2,
+            'Informatique': 2,
+        },
+        'tc': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 3,
+            'English': 3,
+            'Mathematics': 4,
+            'Physics & Chemistry': 4,
+            'Engineering Sciences': 4,
+            'History & Geography': 2,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 2,
+            'Informatique': 3,
+        },
+        'lettres': {
+            'Behavior': 1,
+            'Arabic': 4,
+            'French': 4,
+            'English': 3,
+            'Mathematics': 2,
+            'SVT': 2,
+            'History & Geography': 4,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 1,
+        },
+    },
+
+    '1bac': {
+        'sc_math': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 9,
+            'Physics & Chemistry': 7,
+            'SVT': 3,
+            'History & Geography': 2,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 1,
+        },
+        'sc_exp': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'Physics & Chemistry': 7,
+            'SVT': 7,
+            'History & Geography': 2,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 1,
+        },
+        'sc_telectric': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'Physics & Chemistry': 5,
+            'Engineering Sciences': 8,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_tmechanic': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'Physics & Chemistry': 5,
+            'Engineering Sciences': 8,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_econ': {
+            'Behavior': 1,
+            'Mathematics': 4,
+            'Arabic': 2,
+            'French': 3,
+            'English': 2,
+            'Économie et Organisation': 3,
+            'Comptabilité': 4,
+            'Économie générale et Statistiques': 6,
+            'Droit': 1,
+            'Informatique de gestion': 1,
+            'History & Geography': 3,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 1,
+        },
+        'lettres': {
+            'Behavior': 1,
+            'Arabic': 4,
+            'French': 4,
+            'English': 4,
+            'Mathematics': 1,
+            'SVT': 1,
+            'Philosophy': 3,
+            'History & Geography': 3,
+            'Islamic Studies': 2,
+            'Physical Education': 4,
+        },
+    },
+
+    '2bac': {
+        'sc_math_a': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 9,
+            'Physics & Chemistry': 7,
+            'SVT': 3,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_math_b': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 9,
+            'Physics & Chemistry': 7,
+            'Engineering Sciences': 3,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_phys': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'Physics & Chemistry': 7,
+            'SVT': 5,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_svt': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'SVT': 7,
+            'Physics & Chemistry': 5,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 4,
+        },
+        'sc_agronomic': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 4,
+            'English': 2,
+            'Mathematics': 7,
+            'Physics & Chemistry': 7,
+            'SVT': 5,
+            'SVA': 5,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'History & Geography': 2,
+            'Physical Education': 4
+        },
+        'sc_electric': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 2,
+            'English': 2,
+            'Mathematics': 3,
+            'Engineering Sciences': 6,
+            'Physics & Chemistry': 3,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+        },
+        'sc_mechanic': {
+            'Behavior': 1,
+            'Arabic': 2,
+            'French': 2,
+            'English': 2,
+            'Mathematics': 3,
+            'Engineering Sciences': 6,
+            'Physics & Chemistry': 3,
+            'Islamic Studies': 2,
+            'Philosophy': 2,
+            'Physical Education': 1,
+        },
+        'sc_econ': {
+            'Behavior': 1,
+            'Mathematics': 4,
+            'Arabic': 2,
+            'French': 3,
+            'English': 2,
+            'Économie et Organisation': 3,
+            'Comptabilité': 4,
+            'Économie générale et Statistiques': 6,
+            'Droit': 4,
+            'Informatique de gestion': 4,
+            'Philosophy': 2,
+            'History & Geography': 3,
+            'Islamic Studies': 2,
+            'Physical Education': 4,
+        },
+        'lettres': {
+            'Behavior': 1,
+            'Mathematics': 1,
+            'Arabic': 4,
+            'French': 4,
+            'English': 4,
+            'Philosophy': 3,
+            'History & Geography': 3,
+            'Islamic Studies': 2,
+            'Physical Education': 4,
+        },
+        'sc_humaines': {
+            'Behavior': 1,
+            'Mathematics': 1,
+            'Arabic': 3,
+            'French': 4,
+            'English': 3,
+            'Philosophy': 4,
+            'History & Geography': 4,
+            'Islamic Studies': 2,
+            'Physical Education': 4,
+        },
+    }
+};
+
+const branches = {
+    '5eme': [
+        ['sc', 'Sciences'],
+        ['tc', 'Technologies'],
+        ['lettres', 'Lettres']
+        ],
+    '1bac': [
+        ['sc_exp', 'Sciences Expérimentales'],
+        ['sc_math', 'Sciences Mathématiques'],
+        ['sc_telectric', 'Sciences et Technologies Électriques'],
+        ['sc_tmechanic', 'Sciences et Technologies Mécaniques'],
+        ['sc_econ', 'Sciences Économiques et Gestion'],
+        ['lettres', 'Lettres'],
+    ],
+    '2bac': [
+        ['sc_math_a', 'Sciences Mathématiques A'],
+        ['sc_math_b', 'Sciences Mathématiques B'],
+        ['sc_phys', 'Sciences Physiques'],
+        ['sc_svt', 'Sciences de la Vie et de la Terre'],
+        ['sc_agronomic', 'Sciences Agronomiques'],
+        ['sc_electric', 'Sciences et Technologies Électriques'],
+        ['sc_mechanic', 'Sciences et Technologies Mécaniques'],
+        ['sc_econ', 'Sciences Économiques'],
+        ['sc_humaines', 'Sciences Humaines'],
+        ['lettres', 'Lettres']
+    ]
+};
+
+const levelSelect = document.getElementById('id_level');
+const branchSelect = document.getElementById('id_branch');
+const branchContainer = document.getElementById('branch-container');
+const numExamsInput = document.getElementById('id_num_exams');
+const subjectsContainer = document.getElementById('subjects-container');
+
+function updateSubjectFields() {
+    const selectedLevel = levelSelect.value;
+    const selectedBranch = branchSelect.value;
+    const numExams = 4;
+    
+    subjectsContainer.innerHTML = '';
+    
+    if (!selectedLevel || !selectedBranch) return;
+    
+    const subjectCoeffs = coefficients[selectedLevel]?.[selectedBranch] || {};
+    
+    for (const [subject, coefficient] of Object.entries(subjectCoeffs)) {
+        const subjectFieldId = subject.toLowerCase().replace(/ /g, '_');
+        const subjectDiv = document.createElement('div');
+        subjectDiv.className = 'bg-gray-50 p-4 rounded-lg border-l-4 border-blue-500';
+        
+        let html = `<h3 class="font-bold text-lg mb-3 text-gray-800">${subject}</h3>`;
+        html += `<p class="text-sm text-gray-600 mb-3">Mo3amil: <span class="font-semibold">${coefficient}</span></p>`;
+        html += `<div class="grid gap-3 mb-3" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));">`;
+        
+        if (subjectFieldId.toLowerCase() != 'behavior') {
+            // Exam inputs
+            for (let i = 1; i <= numExams; i++) {
+                const fieldName = `exam_${subjectFieldId}_${i}`;
+                html += `
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Mti7an ${i}</label>
+                    <input type="number" name="${fieldName}" min="0" max="20" step="0.01"
+                    class="form-control w-full px-2 py-1 border border-gray-300 rounded" 
+                    placeholder="0-20">
+                    </div>
+                    `;
+                }
+                html += `</div>`;
+                // Behavior input
+                const behaviorFieldName = `behavior_${subjectFieldId}`;
+                html += `
+                    <div style="min-width: 150px;">
+                        <label class="block text-xs font-medium text-gray-600 mb-1">Behavior</label>
+                        <input type="number" name="${behaviorFieldName}" min="0" max="20" step="0.01"
+                               class="form-control w-full px-2 py-1 border border-gray-300 rounded" 
+                               placeholder="0-20">
+                    </div>
+                `;
+                
+        } else {
+            const fieldName = `exam_${subjectFieldId}_1`;
+                html += `
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Mti7an 1</label>
+                    <input type="number" name="${fieldName}" min="0" max="20" step="0.01"
+                    class="form-control w-full px-2 py-1 border border-gray-300 rounded" 
+                    placeholder="0-20">
+                    </div>
+                    `;
+                
+                html += `</div>`;
+        }
+        
+        subjectDiv.innerHTML = html;
+        subjectsContainer.appendChild(subjectDiv);
+    }
+}
+
+levelSelect.addEventListener('change', function() {
+    const selectedLevel = this.value;
+    
+    if (selectedLevel && branches[selectedLevel]) {
+        branchContainer.style.display = 'block';
+        branchSelect.innerHTML = '<option value="">--- Khtar cho3ba ---</option>';
+        
+        branches[selectedLevel].forEach(([value, label]) => {
+            const option = document.createElement('option');
+            option.value = value;
+            option.textContent = label;
+            branchSelect.appendChild(option);
+        });
+    } else {
+        branchContainer.style.display = 'none';
+        branchSelect.innerHTML = '';
+    }
+});
+
+branchSelect.addEventListener('change', updateSubjectFields);
+
+// Initialize on page load
+if (levelSelect.value) {
+    levelSelect.dispatchEvent(new Event('change'));
+}
+</script>
+{% endblock %}
